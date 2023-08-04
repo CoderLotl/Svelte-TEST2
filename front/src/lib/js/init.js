@@ -1,0 +1,1 @@
+export const params = {home: 'http://localhost'};

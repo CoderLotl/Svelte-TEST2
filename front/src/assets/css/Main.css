@@ -1,0 +1,8 @@
+#frog {
+  cursor: pointer;
+  will-change: filter;
+  transition: filter 300ms;
+}
+#frog:hover {
+  filter: drop-shadow(0 0 20px #2caa05);
+}
