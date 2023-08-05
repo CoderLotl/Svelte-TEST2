@@ -4,7 +4,8 @@
   import '../../assets/css/Main.css';
   import cookieManager from "../js/utilities/cookieManager.js";
 
-  function logout() {
+  function logout()
+  {
     let array = $user;
     let manager = new cookieManager();
     array[2] = 0;
