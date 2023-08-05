@@ -1,9 +1,11 @@
 class cookieManager
 {
 
-  createCookie(name, value, days) {
+  createCookie(name, value, days)
+  {
     let expires = "";
-    if (days) {
+    if (days)
+    {
       const date = new Date();
       date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
       expires = "; expires=" + date.toUTCString();
@@ -12,12 +14,15 @@ class cookieManager
     document.cookie = name + "=" + value + expires + "; path=/";
   }
 
-  getCookie(name) {
+  getCookie(name)
+  {
     const cookieString = document.cookie;
     const cookies = cookieString.split(";").map((cookie) => cookie.trim());
-    for (const cookie of cookies) {
+    for (const cookie of cookies)
+    {
       const [cookieName, cookieValue] = cookie.split("=");
-      if (cookieName === name) {
+      if(cookieName === name)
+      {
         return cookieValue;
       }
     }
