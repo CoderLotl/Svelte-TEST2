@@ -1,9 +1,18 @@
 <script>
-  import frogLogo from "../../assets/frog.gif";
+  // @ts-ignore
+  import frogLogo from '../../assets/frog.gif';
   import '../../assets/css/Login.css';
   import { params } from '../js/init.js';
   import { user } from '../js/stores.js';  
-  import cookieManager from "../js/utilities/cookieManager";
+  import cookieManager from "../js/classes/cookieManager.js";
+  import Login from '../js/classes/login';
+
+  let form = 
+  {
+    user: '',
+    password: '',
+    isForm: true
+  };
   let message = '';
 
   function loginTest()
@@ -12,24 +21,23 @@
     let manager = new cookieManager();
     array[2] = 1;
 
-    manager.createCookie('SESSION',array, 1);
+    manager.createCookie('SESSION', array, 1);
     user.set(array);
   }
 
-  const login = async () =>
+  const login_ = async () =>
   {
     try
-    {      
-      const form = document.forms['login-form'];
-      const formData = new FormData(form);
+    {
+      let result = await new Login().login(form, params['home'] + '/login');
 
-      const response = await fetch(params['home'] + '/login',
+      if(result)
       {
-        body: formData,
-      });      
-      if(response.status === 200)
-      {
-        
+        result.push(1);
+        let manager = new cookieManager();
+        manager.createCookie('SESSION', result, 1);
+
+        user.set(result);
       }
     }
     catch (error)
@@ -68,11 +76,11 @@
     <form name="login-form" class="login-form" action="#" method="post">
       <div class="form-group">
         <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required />
+        <input type="text" id="username" name="username" bind:value={form.user} required />
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required />
+        <input type="password" id="password" name="password" bind:value={form.password} required />
       </div>
       <div class="form-group">
         <input type="submit" value="Log In" />

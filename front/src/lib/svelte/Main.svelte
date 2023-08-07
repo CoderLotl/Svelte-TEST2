@@ -2,7 +2,7 @@
   import { user } from "../js/stores.js";
   import frogLogo from "../../assets/frog.gif";
   import '../../assets/css/Main.css';
-  import cookieManager from "../js/utilities/cookieManager.js";
+  import cookieManager from "../js/classes/cookieManager.js";
 
   function logout()
   {
