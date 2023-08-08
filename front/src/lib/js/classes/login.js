@@ -1,5 +1,3 @@
-import cookieManager from "./cookieManager";
-
 class Login
 {
     login =  async (data, path) =>

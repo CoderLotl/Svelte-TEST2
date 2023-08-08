@@ -14,6 +14,7 @@
     isForm: true
   };
   let message = '';
+  let message2 = '';
 
   function loginTest()
   {
@@ -29,8 +30,10 @@
   {
     try
     {
-      let result = await new Login().login(form, params['home'] + '/login');
-
+      message2 = 'inicio';
+      let login = new Login();
+      let result = await login.login(form, params['home'] + '/login');
+      message2 = 'login ok';      
       if(result)
       {
         result.push(1);
@@ -46,11 +49,16 @@
     }
   };
 
+  const clear = () =>
+  {
+    message = '';
+  }
+
   const fetchData = async () =>
   {
     try
-    {
-      const response = await fetch(params['home']); // Assuming index.php is in the same domain
+    {      
+      const response = await fetch('http://localhost/login'); // Assuming index.php is in the same domain
       const data = await response.text();
       if(response.status === 200 && data.trim() !== '') {
         message = data;
@@ -73,7 +81,7 @@
   </div>
   <div class="login-container">
     <h1>Your Game Name</h1>
-    <form name="login-form" class="login-form" action="#" method="post">
+    <form on:submit|preventDefault={ login_ } name="login-form" class="login-form" method="post">
       <div class="form-group">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" bind:value={form.user} required />
@@ -89,7 +97,13 @@
     <button on:click={fetchData}>
       Press the button to test the server.
     </button>
+    <button on:click={clear}>
+      Clear the Message.
+    </button>
     <br>
+    <p>
+      Etapa: {message2}
+    </p>
     <p>
       {message}
     </p>

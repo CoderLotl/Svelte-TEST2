@@ -2,6 +2,20 @@
 namespace App\Model\Utilities;
 
 use App\Model\Classes\DataAccess;
+
+$db = new DataAccess();
+
+if($db->Find('users', ['name'], ['admin'], APP_ROOT . '/app/database/Database.db'))
+{
+    $data = 'Base de datos funcionando.';
+}
+else
+{
+    $data = 'La base de datos no está funcionando.';
+}
+
+/*
+use App\Model\Classes\DataAccess;
 use App\Model\Classes\CryptoManager;
 use Exception;
 
@@ -34,12 +48,12 @@ try
     }
     else
     {        
-        return $response->withStatus(401);
+        return $response->withStatus(400);
     }
 }
 catch (Exception $e)
 {    
     return $response->withStatus(500)->withJson(['error' => $e->getMessage()]);
 }
-
+*/
 ?>

@@ -1,7 +1,7 @@
 <?php
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: access');
-header('Access-Control-Allow-Methods: GET,POST');
+header('Access-Control-Allow-Headers: *');
+header('Access-Control-Allow-Methods: *');
 header('Content-Type: application/json; charset=UTF-8');
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 //load autoloader
@@ -17,17 +17,22 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 $app = AppFactory::create();
 
 // Define routes
-$app->get('/', function (Request $request, Response $response) {
-    // In this example, we'll return a simple string
+$app->get('/', function (Request $request, Response $response)
+{    
     $data = '';
 
     require_once APP_ROOT . '/app/model/utilities/test.php';
-
-    // Set the Content-Type header to plain text
-    $response = $response->withHeader('Content-Type', 'text/plain');
     
-    // Write the response body with the data
+    $response = $response->withHeader('Content-Type', 'text/plain');
+        
     $response->getBody()->write($data);
+    
+    return $response;
+});
+
+$app->get('/login', function (Request $request, Response $response)
+{    
+    $response->getBody()->write('TEST');
     
     return $response;
 });

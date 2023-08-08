@@ -1,4 +1,4 @@
 <?
 namespace Key;
-define('__SecretKey__', 'SECRET_KEY');
+define('__SecretKey__', 'in_time_you_will_know');
 ?>
