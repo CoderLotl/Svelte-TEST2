@@ -56,8 +56,9 @@ export const fetchJSONText = async (path) =>
     const response = await fetch(path); // Assuming index.php is in the same domain
     const data = await response.json();
     if(response.status === 200)
-    {
-      return data;
+    {      
+      let result = `Method type: ${data.method} | Message: ${data.msg}`;
+      return result;
     }
     else
     {      

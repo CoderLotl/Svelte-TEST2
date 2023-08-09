@@ -33,7 +33,7 @@ $app->get('/json', function (Request $request, Response $response) {
     
     $response->getBody()->write($data);
 
-    return $response->withHeader('Content-Type', 'text/plain');
+    return $response->withHeader('Content-Type', 'application/json');
 });
 
 $app->get('/text', function (Request $request, Response $response) {

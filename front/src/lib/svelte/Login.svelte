@@ -17,7 +17,6 @@
     isForm: true
   };
   let message = '';
-  let message2 = '';
 
   function loginTest()
   {
@@ -90,9 +89,6 @@
       Clear
     </button>
     <br>
-    <p>
-      Etapa: {message2}
-    </p>
     <p>
       {message}
     </p>

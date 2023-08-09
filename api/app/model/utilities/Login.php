@@ -11,7 +11,7 @@ $cryptoManager = new CryptoManager();
 
 $data = json_decode(file_get_contents('php://input'));
 
-Log::WriteLog(APP_ROOT . '/log.txt', 'login data: ' . file_get_contents('php://input'));
+Log::WriteLog(APP_ROOT . '/log.txt', 'login data: ' . json_decode( file_get_contents('php://input') ) . "\n");
 
 if($data['isForm'] === true)
 {           
