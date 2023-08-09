@@ -1,11 +1,14 @@
 <script>
-  // @ts-ignore
+  //graphics
   import frogLogo from '../../assets/frog.gif';
   import '../../assets/css/Login.css';
+  //store and params
   import { params } from '../js/init.js';
   import { user } from '../js/stores.js';  
+  //classes and functions
   import cookieManager from "../js/classes/cookieManager.js";
-  import Login from '../js/classes/login';
+  import {login} from '../js/utilities/login.js';
+  import { fetchJSONText, fetchPlainText, fetchPlainTextWithParams } from '../js/utilities/fetch.js';
 
   let form = 
   {
@@ -26,22 +29,27 @@
     user.set(array);
   }
 
+  const clear = () =>
+  {
+    message = '';
+  }
+
   const login_ = async () =>
   {
     try
-    {
-      message2 = 'inicio';
-      let login = new Login();
-      let result = await login.login(form, params['home'] + '/login');
-      message2 = 'login ok';      
-      if(result)
+    {       
+      //const result = login(form, params['home'] + '/login');
+      
+      message = await fetchPlainTextWithParams(form, params['home'] + '/login');
+
+      /*if(result)
       {
         result.push(1);
         let manager = new cookieManager();
         manager.createCookie('SESSION', result, 1);
 
         user.set(result);
-      }
+      }*/
     }
     catch (error)
     {
@@ -49,30 +57,11 @@
     }
   };
 
-  const clear = () =>
-  {
-    message = '';
-  }
-
   const fetchData = async () =>
   {
-    try
-    {      
-      const response = await fetch('http://localhost/login'); // Assuming index.php is in the same domain
-      const data = await response.text();
-      if(response.status === 200 && data.trim() !== '') {
-        message = data;
-      }
-      else
-      {
-        message = 'Error fetching data'; // Display an error message if the request fails or the data is empty
-      }
-    }
-    catch (error)
-    {
-      message = `EXCEPTION: ${error}`; // Display an error message if an exception occurs
-    }
-  };  
+    //message = await fetchPlainText(params['home'] + '/text');
+    message = await fetchJSONText(params['home'] + '/json');
+  };
 </script>
 
 <main>
@@ -98,7 +87,7 @@
       Press the button to test the server.
     </button>
     <button on:click={clear}>
-      Clear the Message.
+      Clear
     </button>
     <br>
     <p>
