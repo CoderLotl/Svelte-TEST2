@@ -6,7 +6,7 @@ class Log
     public static function WriteLog($path, $content)
     {
         $file = fopen($path, 'a+');
-        fwrite($file, $content);
+        fwrite($file, $content . "\n");
         fclose($file);
         if(file_exists($path))
         {

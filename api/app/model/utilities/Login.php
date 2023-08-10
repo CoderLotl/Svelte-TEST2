@@ -8,27 +8,38 @@ use Exception;
 
 $dataAccess = new DataAccess();
 $cryptoManager = new CryptoManager();
+$file = APP_ROOT . '/log.txt';
+file_put_contents($file, '');
 
-$data = json_decode(file_get_contents('php://input'));
+$data = json_decode(file_get_contents('php://input'), true);
 
-Log::WriteLog(APP_ROOT . '/log.txt', 'login data: ' . json_decode( file_get_contents('php://input') ) . "\n");
+Log::WriteLog($file, 'login data: ' . file_get_contents('php://input') );
 
+Log::WriteLog($file, 'isForm: ' . $data['isForm']);
 if($data['isForm'] === true)
-{           
-    $data[1] = $cryptoManager->Encode($data[1]);
+{
+    Log::WriteLog($file, 'password: ' . $data['password']);    
+    $password = $cryptoManager::Encode($data['password']);
+    $data['password'] = $password;
+    Log::WriteLog($file, 'password encryptado: ' . $data['password']);
 }
 else
 {
-    $data[0] = $cryptoManager->Decode($data[0]);
+    Log::WriteLog($file, 'user: ' . $data['user']);
+    $user = $cryptoManager::Decode($data['user']);
+    $data['user'] = $user;
+    Log::WriteLog($file, 'user des-encryptado: ' . $data['user']);
 }
 
-$columns = ['username', 'password'];
+Log::WriteLog($file, 'crypto pasado');
+
+$columns = ['name', 'password'];
 $values = [$data['user'], $data['password']];
 
 try
 {
     $path = APP_ROOT . '/app/database/Database.db';
-    $userExists = $dataAccess->Find($table, $columns, $values, $path);
+    $userExists = $dataAccess->Find('users', $columns, $values, $path);
 
     if ($userExists)
     {   
