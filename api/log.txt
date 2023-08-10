@@ -1,6 +1,0 @@
-login data: {"user":"admin","password":"admin","isForm":true}
-isForm: 1
-password: admin
-password encryptado: RVg5fZcAIuSTifWE4T04pUs1N2QwNVZnYnhmNHgwM2FBUGlJS0E9PQ==
-crypto pasado
-busqueda realizada. Resultado: no

@@ -17,6 +17,11 @@ class Log
             return false;
         }
     }
+
+    public static function EraseLog($file)
+    {
+        file_put_contents($file, '');
+    }
 }
 
 ?>

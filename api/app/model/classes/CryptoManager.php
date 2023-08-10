@@ -27,7 +27,7 @@ class CryptoManager
         $encryptedData = substr($decodedData, $ivSize);
         
         // Decrypt the data using openssl_decrypt
-        $decryptedData = openssl_decrypt($encryptedData, 'AES-256-CBC', __SecretKey__, 0, $iv);
+        $decryptedData = openssl_decrypt($encryptedData, 'AES-256-CBC', 'in_time_you_will_know', 0, $iv);
         
         return $decryptedData;
     }

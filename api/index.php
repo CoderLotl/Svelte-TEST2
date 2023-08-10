@@ -28,6 +28,8 @@ $app->addErrorMiddleware(true, true, true);
 $app->addBodyParsingMiddleware();
 
 // Routes
+
+// TEST Routes
 $app->get('/json', function (Request $request, Response $response) {
     $data = json_encode(array('method' => 'GET', 'msg' => "Bienvenido a SlimFramework 2023"));
     
@@ -59,6 +61,7 @@ $app->get('/db', function (Request $request, Response $response) {
     return $response;
 });
 
+// SERVER
 $app->post('/login', function(Request $request, Response $response)
     {
         require_once APP_ROOT . '/app/model/utilities/Login.php';

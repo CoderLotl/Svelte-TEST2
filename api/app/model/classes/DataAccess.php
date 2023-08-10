@@ -3,15 +3,17 @@ namespace App\Model\Classes;
 
 use Exception;
 use PDO;
+use App\Model\Utilities\Log;
 
 class DataAccess
 {
     /**
+     * Finds if there's any occurrence where the given columns and values match at the given table.
      * Receives 2 arrays with the params of columns and values to search, the table, and the DB path.
-     * @param mixed $table String containing the table's name.
+     * @param string $table String containing the table's name.
      * @param mixed $columns Array with the names of the columns.
      * @param mixed $values Array with the values to search.
-     * @param mixed $path The path to the DB.
+     * @param string $path The path to the DB.
      * 
      * @return bool
      */
@@ -108,10 +110,70 @@ class DataAccess
         }
     }
 
-    public function Get($table, $columns, $values, $path)
+    /**
+     * Gets a single column from a given table where the given columns and values match.
+     * Receives 2 arrays with the params of columns and values to search, the table, and the DB path.     
+     * @param string $table
+     * @param string $fromColumn Column to search for.
+     * @param mixed $whereColumns Array with the names of the columns.
+     * @param mixed $whereValues Array with the values to search.
+     * @param string $path The path to the DB.
+     * 
+     * @return string|false Returns either a string with the found values or false.
+     */
+    public function GetSingleColumn($table, $fromColumn, $whereColumns, $whereValues, $path)
     {
         $pdo = new PDO('sqlite:' . $path);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);        
+        try
+        {
+            if (!is_array($whereColumns) || !is_array($whereValues) || count($whereColumns) !== count($whereValues))
+            {
+                throw new Exception("Invalid input: Columns and values must be arrays, and be of the same length.");
+            }
+
+            $whereClauses = [];
+            foreach ($whereColumns as $column)
+            {
+                $whereClauses[] = $column . ' = :' . $column;
+            }
+
+            $whereClause = implode(' AND ', $whereClauses);
+
+            $statement = $pdo->prepare("SELECT $fromColumn FROM $table WHERE $whereClause");
+
+            foreach ($whereColumns as $index => $column)
+            {
+                $statement->bindParam(':' . $column, $whereValues[$index], PDO::PARAM_STR);
+            }
+
+            $statement->execute();
+            $resultRaw = $statement->fetchAll(PDO::FETCH_ASSOC);
+            
+            if($resultRaw)
+            {
+                $result = '';
+    
+                for($i = 0; $i < count($resultRaw); $i++)
+                {
+                    $result .= $resultRaw[$i][$fromColumn];
+                    if( ($i + 1) < count($resultRaw))
+                    {
+                        $result .= ', ';
+                    }
+                } 
+    
+                return $result;
+            }
+            else
+            {
+                return false;
+            }
+        }        
+        catch(Exception $e)
+        {
+            die($e);
+        }
     }
 }
 
