@@ -1,5 +1,6 @@
 login data: {"user":"admin","password":"admin","isForm":true}
 isForm: 1
 password: admin
-password encryptado: VVl1rFnLh2n+laTkOT5irU9hUU02R2E3ejRZQzd1Qm8vVFhiS1E9PQ==
+password encryptado: RVg5fZcAIuSTifWE4T04pUs1N2QwNVZnYnhmNHgwM2FBUGlJS0E9PQ==
 crypto pasado
+busqueda realizada. Resultado: no

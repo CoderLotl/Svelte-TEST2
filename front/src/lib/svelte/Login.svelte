@@ -58,8 +58,8 @@
 
   const fetchData = async () =>
   {
-    //message = await fetchPlainText(params['home'] + '/text');
-    message = await fetchJSONText(params['home'] + '/json');
+    message = await fetchPlainText(params['home'] + '/db');
+    //message = await fetchJSONText(params['home'] + '/json');
   };
 </script>
 

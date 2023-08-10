@@ -43,6 +43,7 @@ $app->get('/text', function (Request $request, Response $response) {
 
     return $response->withHeader('Content-Type', 'text/plain');
 });
+
 $app->get('/db', function (Request $request, Response $response) {
     // In this example, we'll return a simple string
     $data = '';

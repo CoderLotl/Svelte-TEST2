@@ -107,6 +107,12 @@ class DataAccess
             die($e);
         }
     }
+
+    public function Get($table, $columns, $values, $path)
+    {
+        $pdo = new PDO('sqlite:' . $path);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
 }
 
 ?>

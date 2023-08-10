@@ -40,7 +40,7 @@ try
 {
     $path = APP_ROOT . '/app/database/Database.db';
     $userExists = $dataAccess->Find('users', $columns, $values, $path);
-
+    Log::WriteLog($file, 'busqueda realizada. Resultado: ' . ($userExists ? 'si' : 'no' ));
     if ($userExists)
     {   
         $content = [$cryptoManager->Encode($data[0]), $data[1]];
