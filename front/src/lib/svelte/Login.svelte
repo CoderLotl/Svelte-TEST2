@@ -41,20 +41,17 @@
             
       if(result)
       {
-        message = result;
-      }
-      else
-      {
-        message = 'NO';
-      }
-      /*if(result)
-      {
+        message = 'YES';
         result.push(1);
         let manager = new cookieManager();
         manager.createCookie('SESSION', result, 1);
 
         user.set(result);
-      }*/
+      }
+      else
+      {
+        message = 'NO';
+      }
     }
     catch (error)
     {
@@ -78,11 +75,11 @@
     <form on:submit|preventDefault={ login_ } name="login-form" class="login-form" method="post">
       <div class="form-group">
         <label for="username">Username:</label>
-        <input type="text" id="username" name="username" bind:value={form.user} required />
+        <input type="text" id="username" name="username" bind:value={form.user} required placeholder="Username"/>
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" bind:value={form.password} required />
+        <input type="password" id="password" name="password" bind:value={form.password} required placeholder="Password"/>
       </div>
       <div class="form-group">
         <input type="submit" value="Log In" />

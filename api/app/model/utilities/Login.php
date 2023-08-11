@@ -37,12 +37,8 @@ function Login()
             $userPass = $cryptoManager::Decode($userEncryptedPass);
             
             if($data['password'] === $userPass)
-            {
-                Log::EraseLog('log.txt');
-                Log::WriteLog('log.txt', $data['user'] . ' | ' . $data['password']);
-                $content = [$cryptoManager->Encode($data['user']), $cryptoManager->Encode($data['password'])];
-                Log::WriteLog('log.txt', json_encode($content));
-                Log::WriteLog('log.txt', $cryptoManager->Decode($content[0]) . ' | ' . $cryptoManager->Decode($content[1]) );
+            {                
+                $content = [$cryptoManager->Encode($data['user']), $cryptoManager->Encode($data['password'])];                
                 return $content;
             }
             else
