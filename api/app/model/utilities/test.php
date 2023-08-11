@@ -2,7 +2,6 @@
 namespace App\Model\Utilities;
 
 use App\Model\Classes\DataAccess;
-use App\Model\Utilities\Log;
 
 $db = new DataAccess();
 

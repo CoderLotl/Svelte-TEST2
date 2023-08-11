@@ -37,10 +37,16 @@
   {
     try
     {       
-      //const result = login(form, params['home'] + '/login');
-      
-      message = await fetchPlainTextWithParams(form, params['home'] + '/login');
-
+      const result = await login(form, params['home'] + '/login');
+            
+      if(result)
+      {
+        message = result;
+      }
+      else
+      {
+        message = 'NO';
+      }
       /*if(result)
       {
         result.push(1);

@@ -15,6 +15,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
 
+use function App\Model\Utilities\Login\Login;
+
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/config/config.php';
 
@@ -26,6 +28,8 @@ $app->addErrorMiddleware(true, true, true);
 
 // Add parse body
 $app->addBodyParsingMiddleware();
+
+/////////////////////////////////////////////////////////////////////////////
 
 // Routes
 
@@ -61,10 +65,21 @@ $app->get('/db', function (Request $request, Response $response) {
     return $response;
 });
 
+/////////////////////////////////////////////////////////////////////////////
+
 // SERVER
 $app->post('/login', function(Request $request, Response $response)
-    {
+    {        
         require_once APP_ROOT . '/app/model/utilities/Login.php';
+        $result = Login();
+
+        if($result !== false)
+        {
+            $result = json_encode($result);
+            $response->getBody()->write($result);
+            $response = $response->withHeader('Content-Type', 'application/json');
+            return $response->withStatus(200);
+        }
     }
 );
 
