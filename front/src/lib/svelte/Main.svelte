@@ -14,7 +14,9 @@
     user.set(array);
   }
 </script>
+<nav class="nav">
 
+</nav>
 <div>
   <img id="frog" src={frogLogo} alt="dancing frog" />
     <button on:click={logout}>

@@ -2,11 +2,6 @@ body {
   background-color: rgb(46, 49, 49);
 }
 
-.log
-{
-  background-color: #2caa05;
-}
-
 .login-container {
   background-color: #040505;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

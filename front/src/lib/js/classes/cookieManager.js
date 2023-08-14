@@ -11,23 +11,26 @@ class cookieManager
       expires = "; expires=" + date.toUTCString();
       value = value;
     }
-    document.cookie = name + "=" + value + expires + "; path=/";
+    document.cookie = name + "=" + JSON.stringify(value) + expires + "; path=/";
   }
-
-  getCookie(name)
-  {
-    const cookieString = document.cookie;
-    const cookies = cookieString.split(";").map((cookie) => cookie.trim());
-    for (const cookie of cookies)
-    {
-      const [cookieName, cookieValue] = cookie.split("=");
-      if(cookieName === name)
-      {
-        return cookieValue;
+  
+  getCookie(name) {
+    const nameEQ = name + "=";
+    const cookies = document.cookie.split(';');
+  
+    for (let i = 0; i < cookies.length; i++) {
+      let cookie = cookies[i];
+      while (cookie.charAt(0) === ' ') {
+        cookie = cookie.substring(1, cookie.length);
+      }
+      if (cookie.indexOf(nameEQ) === 0) {
+        const cookieValue = cookie.substring(nameEQ.length, cookie.length);
+        return JSON.parse(cookieValue);
       }
     }
     return false;
   }
+
 }
 
 export default cookieManager;

@@ -12,9 +12,9 @@ define('DB_HOST', 'your-host');
 define('DB_USER', 'your-username');
 define('DB_PASS', 'your-password');
 define('DB_NAME', 'your-db-name');
+define('DB_PATH', APP_ROOT . '/app/database/Database.db');
 
-// DISABLED DUE TO BEING RESTful
-//ini_set('session.gc_maxlifetime', 3600); //sessions are cleaned every 1 hour
-//session_start();
+define('_SESSION_COOKIE_NAME', '40d0228e409c8b711909680cba94881c');
+define('SESSION_EXPIRATION_SECONDS', 60 * 60 * 24)
 
 ?>

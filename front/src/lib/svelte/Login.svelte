@@ -10,6 +10,8 @@
   import {login} from '../js/utilities/login.js';
   import { fetchJSONText, fetchPlainText, fetchPlainTextWithParams } from '../js/utilities/fetch.js';
 
+  const manager = new cookieManager();
+
   let form = 
   {
     user: '',
@@ -17,16 +19,6 @@
     isForm: true
   };
   let message = '';
-
-  function loginTest()
-  {
-    let array = $user;
-    let manager = new cookieManager();
-    array[2] = 1;
-
-    manager.createCookie('SESSION', array, 1);
-    user.set(array);
-  }
 
   const clear = () =>
   {
@@ -43,7 +35,7 @@
       {
         message = 'YES';
         result.push(1);
-        let manager = new cookieManager();
+        
         manager.createCookie('SESSION', result, 1);
 
         user.set(result);
@@ -104,10 +96,5 @@
         <!-- Add more features relevant to your game -->
       </ul>
     </div>
-  </div>
-  <div class='log'>
-    <button on:click={loginTest}>
-      TEST LOG
-    </button>
   </div>
 </main>

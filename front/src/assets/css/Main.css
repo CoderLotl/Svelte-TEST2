@@ -6,3 +6,10 @@
 #frog:hover {
   filter: drop-shadow(0 0 20px #2caa05);
 }
+
+.nav
+{
+  background-color: #2caa05;
+  height: 40px;
+  width: 100%;
+}
