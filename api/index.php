@@ -1,4 +1,6 @@
 <?php
+/////////////////////////////////////////////////////////////
+#region - - - INIT - - -
 // Error Handling
 error_reporting(-1);
 ini_set('display_errors', 1);
@@ -10,6 +12,7 @@ header('Access-Control-Allow-Methods: *');
 header('Content-Type: application/json; charset=UTF-8');
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
+use App\Model\Classes\Session;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -19,7 +22,20 @@ use function App\Model\Utilities\Login\Login;
 
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/config/config.php';
+#endregion
 
+/////////////////////////////////////////////////////////////
+#region - - - SESSION - - -
+$session = Session::getSessionFromCookie();
+if($session)
+{
+    Session::updateSessionCookie($session);
+    Session::updateSession($session, DB_SQLITE_PATH);
+}
+#endregion
+
+/////////////////////////////////////////////////////////////
+#region - - - SERVER - - -
 // Instantiate App
 $app = AppFactory::create();
 
@@ -28,12 +44,10 @@ $app->addErrorMiddleware(true, true, true);
 
 // Add parse body
 $app->addBodyParsingMiddleware();
+#endregion
 
-/////////////////////////////////////////////////////////////////////////////
-
-// Routes
-
-// TEST Routes
+/////////////////////////////////////////////////////////////
+#region - - - TEST ROUTES - - -
 $app->get('/json', function (Request $request, Response $response) {
     $data = json_encode(array('method' => 'GET', 'msg' => "Bienvenido a SlimFramework 2023"));
     
@@ -64,10 +78,10 @@ $app->get('/db', function (Request $request, Response $response) {
 
     return $response;
 });
+#endregion
 
-/////////////////////////////////////////////////////////////////////////////
-
-// SERVER
+/////////////////////////////////////////////////////////////
+#region - - - ROUTES - - -
 $app->post('/login', function(Request $request, Response $response)
     {        
         require_once APP_ROOT . '/app/model/utilities/Login.php';
@@ -82,5 +96,6 @@ $app->post('/login', function(Request $request, Response $response)
         }
     }
 );
+#endregion
 
 $app->run();

@@ -5,18 +5,14 @@ use PDO;
 
 class Session
 {
-    private $sessionID;
-    private $userIP;
-    private $userHost;
-    private $userID;
+    private $sessionId;
+    private $userId;
     private $password;
     
-    public function __construct($sessionID = null)
+    public function __construct($sessionId = null)
     {
-        $this->sessionID = $sessionID;
-        $this->userIP = $_SERVER['REMOTE_ADDR'];
-        $this->userHost = gethostbyaddr($this->userIP);
-    }
+        $this->sessionId = $sessionId;
+    }        
 
     /////////////////////////////////////////////////////////////
     #region - - - COOKIES - - -
@@ -42,6 +38,39 @@ class Session
 
     /////////////////////////////////////////////////////////////
     #region - - - SESSION - - -
+    public static function createSession($sessionId, $userId, $path)
+    {
+        $userIP = $_SERVER['REMOTE_ADDR'];
+        $userHost = gethostbyaddr($userIP);
+        $time = date('Y-m-d H:i:s');
+
+        $pdo = new PDO('sqlit='.$path);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stm = $pdo->prepare("INSERT INTO 
+                                sessions 
+                                (id, user_id, lasttime, user_ip, user_host) 
+                                VALUES 
+                                (:id, :user_id, :lasttime, :user_ip, :user_host)"
+        );
+        $stm->bindParam(':id', $sessionId);
+        $stm->bindParam(':user_id', $userId);
+        $stm->bindParam(':lasttime', $time);
+        $stm->bindParam(':user_ip', $userIP);
+        $stm->bindParam(':user_host', $userHost);
+        $stm->execute();
+    }
+
+    public static function updateSession($sessionId, $path)
+    {
+        $time = date('Y-m-d H:i:s');
+        $pdo = new PDO('sqlit='.$path);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stm = $pdo->prepare("UPDATE session SET lasttime = :lasttime WHERE id = :sessionId");
+        $stm->bindParam(':lasttime', $time);
+        $stm->bindParam(':sessionId', $sessionId);
+        $stm->execute();
+    }
+
     public static function sessionExistsInDatabase($sessionId, $path)
     {
         $pdo = new PDO('sqlit='.$path);
@@ -83,7 +112,7 @@ class Session
         $stm->execute();
     }
 
-    private function generateID($path)
+    private static function generateID($path)
     {
       while (true) {
         //if we manipulate this - we need remember that url crypt system are related
