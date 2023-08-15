@@ -27,10 +27,19 @@ require __DIR__ . '/config/config.php';
 /////////////////////////////////////////////////////////////
 #region - - - SESSION - - -
 $session = Session::getSessionFromCookie();
+$player;
 if($session)
 {
-    Session::updateSessionCookie($session);
-    Session::updateSession($session, DB_SQLITE_PATH);
+    if(Session::findSessionInDatabase($session, DB_SQLITE_PATH))
+    {
+        $player = Session::findSessionPlayer($session, DB_SQLITE_PATH);
+        Session::updateSessionCookie($session);
+        Session::updateSessionInDatabase($session, DB_SQLITE_PATH);
+    }
+    else
+    {
+        Session::deleteSessionCookie();
+    }
 }
 #endregion
 
@@ -64,16 +73,13 @@ $app->get('/text', function (Request $request, Response $response) {
     return $response->withHeader('Content-Type', 'text/plain');
 });
 
-$app->get('/db', function (Request $request, Response $response) {
-    // In this example, we'll return a simple string
+$app->get('/db', function (Request $request, Response $response) {    
     $data = '';
 
     require_once APP_ROOT . '/app/model/utilities/test.php';
-
-    // Set the Content-Type header to plain text
+    
     $response = $response->withHeader('Content-Type', 'text/plain');
-
-    // Write the response body with the data
+    
     $response->getBody()->write($data);
 
     return $response;
@@ -82,6 +88,19 @@ $app->get('/db', function (Request $request, Response $response) {
 
 /////////////////////////////////////////////////////////////
 #region - - - ROUTES - - -
+$app->post('/session', function(Request $request, Response $response) use ($session)
+    {
+        if($session)
+        {
+            return $response->withStatus(200);
+        }
+        else
+        {
+            return $response->withStatus(401);
+        }
+    }
+);
+
 $app->post('/login', function(Request $request, Response $response)
     {        
         require_once APP_ROOT . '/app/model/utilities/Login.php';

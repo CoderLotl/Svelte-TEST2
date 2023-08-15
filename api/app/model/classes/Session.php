@@ -60,7 +60,7 @@ class Session
         $stm->execute();
     }
 
-    public static function updateSession($sessionId, $path)
+    public static function updateSessionInDatabase($sessionId, $path)
     {
         $time = date('Y-m-d H:i:s');
         $pdo = new PDO('sqlit='.$path);
@@ -71,13 +71,22 @@ class Session
         $stm->execute();
     }
 
-    public static function sessionExistsInDatabase($sessionId, $path)
+    public static function findSessionInDatabase($sessionId, $path)
     {
         $pdo = new PDO('sqlit='.$path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $stm = $pdo->prepare("SELECT COUNT(*) FROM sessions WHERE id = :id");
-        $stm->bindParam("id", $sessionId);
+        $stm->bindParam(":id", $sessionId);
         return $stm->execute() > 0;
+    }
+
+    public static function findSessionPlayer($sessionId, $path)
+    {
+        $pdo = new PDO('sqlit='.$path);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stm = $pdo->prepare("SELECT user_id FROM sessions where id = :id");
+        $stm->bindParam(":id", $sessionId);
+        return $stm->execute();
     }
   
     /**
@@ -91,7 +100,7 @@ class Session
         $pdo = new PDO('sqlit='.$path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $stm = $pdo->prepare("DELETE FROM sessions WHERE id = :id");
-        $stm->bindParam("id", $sessionId);
+        $stm->bindParam(":id", $sessionId);
         $stm->execute();
     }
   
