@@ -14,14 +14,10 @@ header('Content-Type: application/json; charset=UTF-8');
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 use App\Model\Classes\Account;
-use App\Model\Classes\Session;
-use App\Model\Utilities\Log;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
-
-use function App\Model\Utilities\Login\Login;
 
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/config/config.php';
