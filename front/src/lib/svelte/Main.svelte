@@ -9,7 +9,7 @@
   {
     try
     {
-      const response = await logout(params['home'] + '/logout');
+      const response = await logout(params['home'] + '/auth/logout');
 
       if(response)
       {

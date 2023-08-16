@@ -36,22 +36,22 @@ class Session
      * Updates or creates the session cookie on the client.
      * @param mixed $session_id
      * 
-     * @return void
+     * @return bool
      */
     public static function updateSessionCookie($session_id)
     {      
       $expirationTime = time() + SESSION_EXPIRATION_SECONDS;
-      setcookie(_SESSION_COOKIE_NAME, $session_id, $expirationTime, "/", ".localhost", null, true);      
+      return setcookie(_SESSION_COOKIE_NAME, $session_id, $expirationTime, "/", ".localhost", null, true);      
     }
 
     /**
      * COOKIES
      * Deletes the session cookie on the client.
-     * @return [type]
+     * @return bool
      */
     public static function deleteSessionCookie()
     {
-      setcookie(_SESSION_COOKIE_NAME, 0, time() - SESSION_EXPIRATION_SECONDS * 60);
+      return setcookie(_SESSION_COOKIE_NAME, '', time() - 3600, '/');
     }
     #endregion
 

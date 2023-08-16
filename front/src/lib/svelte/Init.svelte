@@ -4,7 +4,7 @@
   import { logged } from '../js/stores.js';  
 
   onMount( async () => {
-    const response = await fetch(params['home'] + '/validate',
+    const response = await fetch(params['home'] + '/auth/validate',
     {
       method: 'GET',
       credentials: 'include'

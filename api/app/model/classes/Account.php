@@ -97,11 +97,11 @@ class Account
         $session = Session::getSessionFromCookie($path);
         if(!$session || !Session::findSessionInDatabase($session, $path))
         {
-            return false;
+            return false;            
         }
 
+        Session::deleteSessionFromDatabase($session, $path);        
         Session::deleteSessionCookie();
-        Session::deleteSessionFromDatabase($session, $path);
         return true;
     }
 

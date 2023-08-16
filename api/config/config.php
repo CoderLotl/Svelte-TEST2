@@ -15,6 +15,8 @@ define('DB_NAME', 'your-db-name');
 define('DB_SQLITE_PATH', APP_ROOT . '/app/database/Database.db');
 
 define('_SESSION_COOKIE_NAME', '40d0228e409c8b711909680cba94881c');
-define('SESSION_EXPIRATION_SECONDS', 60 * 60 * 24)
+define('SESSION_EXPIRATION_SECONDS', 60 * 60 * 24);
+
+define('REFRESH_SESSION', APP_ROOT . '/app/model/scripts/refreshSession.php');
 
 ?>

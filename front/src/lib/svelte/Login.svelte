@@ -26,7 +26,7 @@
   {
     try
     {       
-      const response = await login(form, params['home'] + '/login');
+      const response = await login(form, params['home'] + '/auth/login');
             
       if(response)
       {
