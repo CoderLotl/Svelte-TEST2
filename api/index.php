@@ -12,6 +12,7 @@ header('Access-Control-Allow-Methods: *');
 header('Content-Type: application/json; charset=UTF-8');
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
+use App\Model\Classes\Account;
 use App\Model\Classes\Session;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -26,20 +27,13 @@ require __DIR__ . '/config/config.php';
 
 /////////////////////////////////////////////////////////////
 #region - - - SESSION - - -
+// Updating both the session and the cookie session to extend the session's lifetime.
 $session = Session::getSessionFromCookie();
-$player;
-if($session)
+
+if($session && Session::findSessionInDatabase($session, DB_SQLITE_PATH))
 {
-    if(Session::findSessionInDatabase($session, DB_SQLITE_PATH))
-    {
-        $player = Session::findSessionPlayer($session, DB_SQLITE_PATH);
-        Session::updateSessionCookie($session);
-        Session::updateSessionInDatabase($session, DB_SQLITE_PATH);
-    }
-    else
-    {
-        Session::deleteSessionCookie();
-    }
+    Session::updateSessionCookie($session);
+    Session::updateSessionInDatabase($session, DB_SQLITE_PATH);
 }
 #endregion
 
@@ -88,9 +82,9 @@ $app->get('/db', function (Request $request, Response $response) {
 
 /////////////////////////////////////////////////////////////
 #region - - - ROUTES - - -
-$app->post('/session', function(Request $request, Response $response) use ($session)
+$app->get('/validate', function(Request $request, Response $response)
     {
-        if($session)
+        if(Account::ValidateSession(DB_SQLITE_PATH))
         {
             return $response->withStatus(200);
         }
@@ -102,16 +96,14 @@ $app->post('/session', function(Request $request, Response $response) use ($sess
 );
 
 $app->post('/login', function(Request $request, Response $response)
-    {        
-        require_once APP_ROOT . '/app/model/utilities/Login.php';
-        $result = Login();
-
-        if($result !== false)
+    {           
+        if(Account::Login(DB_SQLITE_PATH))
         {
-            $result = json_encode($result);
-            $response->getBody()->write($result);
-            $response = $response->withHeader('Content-Type', 'application/json');
             return $response->withStatus(200);
+        }
+        else
+        {
+            return $response->withStatus(400);
         }
     }
 );

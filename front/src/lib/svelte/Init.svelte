@@ -1,22 +1,15 @@
 <script>
   import { onMount } from "svelte";
-  import { user } from '../js/stores.js';
-  import cookieManager from "../js/classes/cookieManager.js";  
+  import { logged } from '../js/stores.js';  
 
-  onMount(() => {
-    let manager = new cookieManager();
-    
-    let cookie = manager.getCookie('SESSION')
-    
-    if(!cookie || !(Array.isArray(cookie) && cookie.length === 3))
+  onMount( async () => {
+    const response = await fetch('http://localhost/validate',
     {
-      manager.createCookie('SESSION',[0,0,0], 1);
-    }
-    else
-    {      
-      let array = $user;
-      array = cookie;
-      user.set(array);     
+      method: 'GET'
+    });
+    if(response.status === 200)
+    {
+      logged.set(true);
     }
   });
 </script>

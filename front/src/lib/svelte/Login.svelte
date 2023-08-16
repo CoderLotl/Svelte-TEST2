@@ -4,19 +4,16 @@
   import '../../assets/css/Login.css';
   //store and params
   import { params } from '../js/init.js';
-  import { user } from '../js/stores.js';  
-  //classes and functions
-  import cookieManager from "../js/classes/cookieManager.js";
+  import { logged } from '../js/stores.js';  
+  //classes and functions  
   import {login} from '../js/utilities/login.js';
   import { fetchJSONText, fetchPlainText, fetchPlainTextWithParams } from '../js/utilities/fetch.js';
 
-  const manager = new cookieManager();
-
+  
   let form = 
   {
     user: '',
-    password: '',
-    isForm: true
+    password: ''    
   };
   let message = '';
 
@@ -29,16 +26,12 @@
   {
     try
     {       
-      const result = await login(form, params['home'] + '/login');
+      const response = await login(form, params['home'] + '/login');
             
-      if(result)
+      if(response)
       {
         message = 'YES';
-        result.push(1);
-        
-        manager.createCookie('SESSION', result, 1);
-
-        user.set(result);
+        logged.set(true);
       }
       else
       {

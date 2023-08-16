@@ -11,9 +11,8 @@ export const login = async (data, path) =>
         }
     );
     if (response.status === 200)
-    {
-        let result = await response.json();
-        return result;
+    {        
+        return true;
     }      
     else
     {

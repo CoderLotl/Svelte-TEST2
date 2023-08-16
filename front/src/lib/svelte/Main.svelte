@@ -1,17 +1,12 @@
 <script>
-  import { user } from "../js/stores.js";
+  import { logged } from "../js/stores.js";
   import frogLogo from "../../assets/frog.gif";
   import '../../assets/css/Main.css';
   import cookieManager from "../js/classes/cookieManager.js";
 
   function logout()
   {
-    let array = $user;
-    let manager = new cookieManager();
-    array[2] = 0;
-
-    manager.createCookie('SESSION',array, 1);
-    user.set(array);
+    logged.set(false);
   }
 </script>
 <nav class="nav">

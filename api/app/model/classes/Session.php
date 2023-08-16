@@ -2,6 +2,8 @@
 namespace App\Model\Classes;
 
 use PDO;
+use App\Model\Utilities\Log;
+use Exception;
 
 class Session
 {
@@ -16,6 +18,11 @@ class Session
 
     /////////////////////////////////////////////////////////////
     #region - - - COOKIES - - -
+    /**
+     * COOKIES
+     * Returns the session from the cookies if it exists.
+     * @return int|null
+     */
     public static function getSessionFromCookie()
     {
       if (isset($_COOKIE[_SESSION_COOKIE_NAME]) && !empty($_COOKIE[_SESSION_COOKIE_NAME])) {
@@ -24,12 +31,25 @@ class Session
       return null;
     }
 
+    /**
+     * COOKIES
+     * Updates or creates the session cookie on the client.
+     * @param mixed $session_id
+     * 
+     * @return void
+     */
     public static function updateSessionCookie($session_id)
     {
+      Log::WriteLog('cookie.txt', "{$session_id} " . _SESSION_COOKIE_NAME);
       $expirationTime = time() + SESSION_EXPIRATION_SECONDS;
-      setcookie(_SESSION_COOKIE_NAME, $session_id, $expirationTime, "/", null, null, true);
+      setcookie(_SESSION_COOKIE_NAME, $session_id, $expirationTime, "/", ".localhost", false, false);
     }
 
+    /**
+     * COOKIES
+     * Deletes the session cookie on the client.
+     * @return [type]
+     */
     public static function deleteSessionCookie()
     {
       setcookie(_SESSION_COOKIE_NAME, 0, time() - SESSION_EXPIRATION_SECONDS * 60);
@@ -38,13 +58,22 @@ class Session
 
     /////////////////////////////////////////////////////////////
     #region - - - SESSION - - -
+    /**
+     * SESSION
+     * Creates a session in the DB.
+     * @param string $sessionId
+     * @param string $userId
+     * @param string $path
+     * 
+     * @return void
+     */
     public static function createSession($sessionId, $userId, $path)
     {
         $userIP = $_SERVER['REMOTE_ADDR'];
         $userHost = gethostbyaddr($userIP);
         $time = date('Y-m-d H:i:s');
 
-        $pdo = new PDO('sqlit='.$path);
+        $pdo = new PDO('sqlite:'.$path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $stm = $pdo->prepare("INSERT INTO 
                                 sessions 
@@ -60,10 +89,19 @@ class Session
         $stm->execute();
     }
 
+    /**
+     * SESSION
+     * Updates an existing session in the DB. Only affects at the 'lasttime' column in order to extend the session
+     * life time.
+     * @param mixed $sessionId
+     * @param mixed $path
+     * 
+     * @return void
+     */
     public static function updateSessionInDatabase($sessionId, $path)
     {
         $time = date('Y-m-d H:i:s');
-        $pdo = new PDO('sqlit='.$path);
+        $pdo = new PDO('sqlite:'.$path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $stm = $pdo->prepare("UPDATE session SET lasttime = :lasttime WHERE id = :sessionId");
         $stm->bindParam(':lasttime', $time);
@@ -71,37 +109,57 @@ class Session
         $stm->execute();
     }
 
-    public static function findSessionInDatabase($sessionId, $path)
-    {
-        $pdo = new PDO('sqlit='.$path);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stm = $pdo->prepare("SELECT COUNT(*) FROM sessions WHERE id = :id");
-        $stm->bindParam(":id", $sessionId);
-        return $stm->execute() > 0;
-    }
-
-    public static function findSessionPlayer($sessionId, $path)
-    {
-        $pdo = new PDO('sqlit='.$path);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stm = $pdo->prepare("SELECT user_id FROM sessions where id = :id");
-        $stm->bindParam(":id", $sessionId);
-        return $stm->execute();
-    }
-  
     /**
+     * SESSION
+     * Provided a session ID, looks for the session in the DB.
      * @param mixed $sessionId
      * @param mixed $path
      * 
-     * @return [type]
+     * @return bool
+     */
+    public static function findSessionInDatabase($sessionId, $path)
+    {
+        $pdo = new PDO('sqlite:'.$path);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stm = $pdo->prepare("SELECT COUNT(*) FROM sessions WHERE id = :id");
+        $stm->bindParam(":id", $sessionId);
+        $stm->execute();
+        return $stm->fetchColumn() > 0;
+    }
+
+    /**
+     * SESSION
+     * Returns the session's player ID, provided the session exists.
+     * @param mixed $sessionId
+     * @param mixed $path
+     * 
+     * @return int|false
+     */
+    public static function findSessionPlayer($sessionId, $path)
+    {
+        $pdo = new PDO('sqlite:'.$path);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $stm = $pdo->prepare("SELECT user_id FROM sessions where id = :id");
+        $stm->bindParam(":id", $sessionId);
+        $stm->execute();
+        return $stm->fetchColumn();
+    }
+  
+    /**
+     * SESSION
+     * Deletes a session from the DB.
+     * @param mixed $sessionId
+     * @param mixed $path
+     * 
+     * @return bool
      */
     public static function deleteSessionFromDatabase($sessionId, $path)
     {
-        $pdo = new PDO('sqlit='.$path);
+        $pdo = new PDO('sqlite:'.$path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $stm = $pdo->prepare("DELETE FROM sessions WHERE id = :id");
         $stm->bindParam(":id", $sessionId);
-        $stm->execute();
+        return $stm->execute();
     }
   
     /**
@@ -114,35 +172,51 @@ class Session
      */
     public static function deleteExpiredSessions($expirationTimestamp, $path)
     {
-        $pdo = new PDO('sqlite='.$path);
+        $pdo = new PDO('sqlite:'.$path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $stm = $pdo->prepare("DELETE FROM sessions WHERE lasttime < :expirationTime");
         $stm->bindParam(":expirationTime", $expirationTimestamp);
         $stm->execute();
     }
 
-    private static function generateID($path)
+    /**
+     * SESSION
+     * Generates a random session ID.
+     * @param mixed $path
+     * 
+     * @return int
+     */
+    public static function generateID($path)
     {
-      while (true) {
-        //if we manipulate this - we need remember that url crypt system are related
-        //with session key length.
-        $remaddr = $_SERVER['REMOTE_ADDR'];
+      try
+      {
+        while (true) {
+          //if we manipulate this - we need remember that url crypt system are related
+          //with session key length.
+          $remaddr = $_SERVER['REMOTE_ADDR'];        
+    
+          // 4 byte suffix of session id is based on player's IP to eliminate session conflicts
+          $sessionIdSuffix = intval(sprintf("%u", ip2long($remaddr)));
+    
+          $new_id = (1 << 32) * hexdec(sprintf("%X%X%X%X", mt_rand(0, 127), mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255))) + $sessionIdSuffix;
+          $new_id = intval(sprintf("%u", $new_id));          
   
-        // 4 byte suffix of session id is based on player's IP to eliminate session conflicts
-        $sessionIdSuffix = intval(sprintf("%u", ip2long($remaddr)));
-  
-        $new_id = (1 << 32) * hexdec(sprintf("%X%X%X%X", mt_rand(0, 127), mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255))) + $sessionIdSuffix;
-        $new_id = intval(sprintf("%u", $new_id));
-
-        $pdo = new PDO('sqlite:' . $path);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-  
-        $stm = $pdo->prepare("SELECT id FROM sessions WHERE id = :sessionID LIMIT 1");
-        $stm->bindParam(':sessionID', $new_id, PDO::PARAM_INT);
-        $idAlreadyExists = $stm->execute();
-        if (!$idAlreadyExists) {
-          return $new_id;
+          $pdo = new PDO('sqlite:' . $path);
+          $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+          
+          $stm = $pdo->prepare("SELECT id FROM sessions WHERE id = :sessionID LIMIT 1");
+          $stm->bindParam(':sessionID', $new_id);
+          $stm->execute();
+          $idAlreadyExists = $stm->fetchColumn();
+          
+          if (!$idAlreadyExists) {            
+            return $new_id;
+          }
         }
+      }
+      catch(Exception $e)
+      {
+        Log::WriteLog('log3.txt', $e);
       }
     }
 }

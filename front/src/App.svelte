@@ -1,22 +1,22 @@
 <script>  
-  import { user } from './lib/js/stores.js';
+  import { logged } from './lib/js/stores.js';
   import Init from './lib/svelte/Init.svelte';
   import Login from './lib/svelte/Login.svelte';
   import Main from './lib/svelte/Main.svelte';
-  let userMain;
+  let loggedMain;
 
-  user.subscribe
+  logged.subscribe
   (
     (value) =>
     {
-      userMain = value;
+      loggedMain = value;
     }
   );
 </script>
 
 <Init />
 
-{#if userMain[2] === 0}
+{#if loggedMain === false}
   <Login />
 {:else}
   <Main />
