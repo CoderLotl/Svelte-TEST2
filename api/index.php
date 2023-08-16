@@ -6,14 +6,16 @@ error_reporting(-1);
 ini_set('display_errors', 1);
 
 // CORS
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: http://localhost:5173');
 header('Access-Control-Allow-Headers: *');
 header('Access-Control-Allow-Methods: *');
+header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json; charset=UTF-8');
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 use App\Model\Classes\Account;
 use App\Model\Classes\Session;
+use App\Model\Utilities\Log;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -28,13 +30,13 @@ require __DIR__ . '/config/config.php';
 /////////////////////////////////////////////////////////////
 #region - - - SESSION - - -
 // Updating both the session and the cookie session to extend the session's lifetime.
-$session = Session::getSessionFromCookie();
+/*$session = Session::getSessionFromCookie();
 
 if($session && Session::findSessionInDatabase($session, DB_SQLITE_PATH))
-{
+{    
     Session::updateSessionCookie($session);
     Session::updateSessionInDatabase($session, DB_SQLITE_PATH);
-}
+}*/
 #endregion
 
 /////////////////////////////////////////////////////////////
@@ -83,7 +85,7 @@ $app->get('/db', function (Request $request, Response $response) {
 /////////////////////////////////////////////////////////////
 #region - - - ROUTES - - -
 $app->get('/validate', function(Request $request, Response $response)
-    {
+    {        
         if(Account::ValidateSession(DB_SQLITE_PATH))
         {
             return $response->withStatus(200);
@@ -96,7 +98,7 @@ $app->get('/validate', function(Request $request, Response $response)
 );
 
 $app->post('/login', function(Request $request, Response $response)
-    {           
+    {        
         if(Account::Login(DB_SQLITE_PATH))
         {
             return $response->withStatus(200);
@@ -107,6 +109,20 @@ $app->post('/login', function(Request $request, Response $response)
         }
     }
 );
+
+$app->post('/logout', function(Request $request, Response $response)
+    {        
+        if(Account::Logout(DB_SQLITE_PATH))
+        {
+            return $response->withStatus(200);
+        }
+        else
+        {
+            return $response->withStatus(400);
+        }
+    }
+);
+
 #endregion
 
 $app->run();

@@ -6,7 +6,7 @@
   import { params } from '../js/init.js';
   import { logged } from '../js/stores.js';  
   //classes and functions  
-  import {login} from '../js/utilities/login.js';
+  import { login } from '../js/utilities/login.js';
   import { fetchJSONText, fetchPlainText, fetchPlainTextWithParams } from '../js/utilities/fetch.js';
 
   

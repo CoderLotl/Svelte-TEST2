@@ -1,12 +1,25 @@
 <script>
   import { logged } from "../js/stores.js";
+  import { logout } from '../js/utilities/login.js';
+  import { params } from '../js/init.js';
   import frogLogo from "../../assets/frog.gif";
-  import '../../assets/css/Main.css';
-  import cookieManager from "../js/classes/cookieManager.js";
+  import '../../assets/css/Main.css';  
 
-  function logout()
+  async function logout_()
   {
-    logged.set(false);
+    try
+    {
+      const response = await logout(params['home'] + '/logout');
+
+      if(response)
+      {
+        logged.set(false);
+      }
+    }
+    catch(error)
+    {
+      
+    }
   }
 </script>
 <nav class="nav">
@@ -14,7 +27,7 @@
 </nav>
 <div>
   <img id="frog" src={frogLogo} alt="dancing frog" />
-    <button on:click={logout}>
+    <button on:click={logout_}>
         Log Out
     </button>
 </div>

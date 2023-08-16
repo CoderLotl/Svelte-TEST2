@@ -1,11 +1,13 @@
 <script>
   import { onMount } from "svelte";
+  import { params } from '../js/init.js';
   import { logged } from '../js/stores.js';  
 
   onMount( async () => {
-    const response = await fetch('http://localhost/validate',
+    const response = await fetch(params['home'] + '/validate',
     {
-      method: 'GET'
+      method: 'GET',
+      credentials: 'include'
     });
     if(response.status === 200)
     {

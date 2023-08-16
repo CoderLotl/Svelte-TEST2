@@ -39,10 +39,9 @@ class Session
      * @return void
      */
     public static function updateSessionCookie($session_id)
-    {
-      Log::WriteLog('cookie.txt', "{$session_id} " . _SESSION_COOKIE_NAME);
+    {      
       $expirationTime = time() + SESSION_EXPIRATION_SECONDS;
-      setcookie(_SESSION_COOKIE_NAME, $session_id, $expirationTime, "/", ".localhost", false, false);
+      setcookie(_SESSION_COOKIE_NAME, $session_id, $expirationTime, "/", ".localhost", null, true);      
     }
 
     /**

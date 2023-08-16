@@ -48,12 +48,9 @@ class Account
                     $session = Session::getSessionFromCookie();                    
                     if(!$session) //if the session cookie doesn't exist ...
                     { // we get the user's ID, create a new session, and cookie.
-                        $userId = $dataAccess->GetSingleColumn('users', 'id', ['name'], [$data['user']], $path);                        
-                        
-                        $sessionID = Session::generateID($path);
-                        
-                        Session::createSession($sessionID, $userId, $path);
-                        
+                        $userId = $dataAccess->GetSingleColumn('users', 'id', ['name'], [$data['user']], $path);                                                
+                        $sessionID = Session::generateID($path);                        
+                        Session::createSession($sessionID, $userId, $path);                        
                         Session::updateSessionCookie($sessionID);                        
                     }
                     else
@@ -92,6 +89,19 @@ class Account
             die($e);
             Log::WriteLog('Account.txt', $e . " " . date('Y-m-d'));
         }
+    }
+
+    public static function Logout($path)
+    {
+        $session = Session::getSessionFromCookie($path);
+        if(!$session || !Session::findSessionInDatabase($session, $path))
+        {
+            return false;
+        }
+
+        Session::deleteSessionCookie();
+        Session::deleteSessionFromDatabase($session, $path);
+        return true;
     }
 
     public static function ValidateSession($path)
