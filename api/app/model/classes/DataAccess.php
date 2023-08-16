@@ -115,8 +115,8 @@ class DataAccess
      * Receives 2 arrays with the params of columns and values to search, the table, and the DB path.     
      * @param string $table
      * @param string $fromColumn Column to search for.
-     * @param mixed $whereColumns Array with the names of the columns.
-     * @param mixed $whereValues Array with the values to search.
+     * @param array $whereColumns Array with the names of the columns.
+     * @param array $whereValues Array with the values to search.
      * @param string $path The path to the DB.
      * 
      * @return string|false Returns either a string with the found values or false.

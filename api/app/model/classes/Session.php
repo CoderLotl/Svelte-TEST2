@@ -215,7 +215,7 @@ class Session
       }
       catch(Exception $e)
       {
-        Log::WriteLog('log3.txt', $e);
+        Log::WriteLog('SessionErrors.txt', $e->getMessage() . " " . date('Y-m-d'));
       }
     }
 }

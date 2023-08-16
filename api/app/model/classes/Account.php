@@ -17,7 +17,7 @@ class Account
         $userHost = gethostbyaddr($userIP);
         $time = date('Y-m-d H:i:s');
 
-        $pdo = new PDO('sqlit='.$path);
+        $pdo = new PDO('sqlit:'.$path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $stm = $pdo->prepare("INSERT INTO users
                         (name, password, lasttime, ip, hostname, registerd)
@@ -40,12 +40,12 @@ class Account
             $userExists = $dataAccess->Find('users', $columns, $values, $path);
             
             if ($userExists)
-            {           
+            {                
                 $userEncryptedPass = $dataAccess->GetSingleColumn('users', 'password', ['name'], [$data['user']], $path);
                 
                 if(password_verify($data['password'], $userEncryptedPass))
                 {                    
-                    $session = Session::getSessionFromCookie();                    
+                    $session = Session::getSessionFromCookie();
                     if(!$session) //if the session cookie doesn't exist ...
                     { // we get the user's ID, create a new session, and cookie.
                         $userId = $dataAccess->GetSingleColumn('users', 'id', ['name'], [$data['user']], $path);                                                
@@ -72,6 +72,7 @@ class Account
                         }
                     }
                     
+                    Account::UpdateUserData($data['user'], $path);
                     return true; //either way we return true since the user has logged in correctly.                    
                 }
                 else
@@ -87,7 +88,7 @@ class Account
         catch (Exception $e)
         {    
             die($e);
-            Log::WriteLog('Account.txt', $e . " " . date('Y-m-d'));
+            Log::WriteLog('AccountErrors.txt', $e->getMessage() . " " . date('Y-m-d'));
         }
     }
 
@@ -115,6 +116,45 @@ class Account
         Session::updateSessionCookie($session);
         Session::updateSessionInDatabase($session, $path);
         return true;
+    }
+
+    private static function UpdateUserData($userName, $path)
+    {
+        try
+        {
+            $dataAccess = new DataAccess();            
+
+            $userID = $dataAccess->GetSingleColumn('users', 'id', ['name'], [$userName], $path);
+            $userIP = $_SERVER['REMOTE_ADDR'];
+            $userHost = gethostbyaddr($userIP);
+            $time = date('Y-m-d H:i:s');
+
+            $userIPsJSON = $dataAccess->GetSingleColumn('users', 'ip', ['id'], [$userID], $path);
+            $userHostsJSON = $dataAccess->GetSingleColumn('users', 'hostname', ['id'], [$userID], $path);
+    
+            $userIPs = json_decode($userIPsJSON);
+            $userHosts = json_decode($userHostsJSON);
+    
+            if (!in_array($userIP, $userIPs)) {
+                $userIPs[] = $userIP;
+            }
+            if (!in_array($userHost, $userHosts)) {
+                $userHosts[] = $userHost;
+            }
+    
+            $userIPsJSON = json_encode($userIPs);
+            $userHostsJSON = json_encode($userHosts);
+    
+            $pdo = new PDO('sqlite:' . $path);
+    
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $stm = $pdo->prepare("UPDATE users SET ip = ?, hostname = ?, lasttime = ? WHERE id = ?");
+            $stm->execute([$userIPsJSON, $userHostsJSON, $time, $userID]);            
+        }
+        catch(Exception $e)
+        {
+            Log::WriteLog('AccountErrors.txt', $e->getMessage() . " " . date('Y-m-d'));
+        }
     }
 }
 ?>
