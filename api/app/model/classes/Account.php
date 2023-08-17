@@ -113,8 +113,7 @@ class Account
             return false;
         }        
         Session::updateSessionCookie($session);        
-        Session::updateSessionInDatabase($session, $path);
-        Log::WriteLog('refresh.txt', 'YESSS');
+        Session::updateSessionInDatabase($session, $path);        
         return true;
     }
 
