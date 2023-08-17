@@ -18,6 +18,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use Slim\Routing\RouteCollectorProxy;
+use App\Model\Utilities\Log;
 
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/config/config.php';
@@ -63,9 +64,8 @@ $app->group('/test', function ($group) {
 /////////////////////////////////////////////////////////////
 #region - - - ROUTES - - -
 $app->group('/auth', function ($group) {
-    $group->get('/validate', function(Request $request, Response $response) {
+    $group->get('/validate', function(Request $request, Response $response) {        
         if(Account::ValidateSession(DB_SQLITE_PATH)) {
-            REFRESH_SESSION;
             return $response->withStatus(200);
         } else {
             return $response->withStatus(401);

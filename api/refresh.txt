@@ -1,0 +1,5 @@
+pre
+pre
+pre
+SQLSTATE[HY000]: General error: 1 no such table: session
+YESSS

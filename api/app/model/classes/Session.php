@@ -100,12 +100,19 @@ class Session
     public static function updateSessionInDatabase($sessionId, $path)
     {
         $time = date('Y-m-d H:i:s');
-        $pdo = new PDO('sqlite:'.$path);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stm = $pdo->prepare("UPDATE session SET lasttime = :lasttime WHERE id = :sessionId");
-        $stm->bindParam(':lasttime', $time);
-        $stm->bindParam(':sessionId', $sessionId);
-        $stm->execute();
+        try
+        {
+          $pdo = new PDO('sqlite:'.$path);
+          $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);          
+          $stm = $pdo->prepare("UPDATE sessions SET lasttime = :lasttime WHERE id = :sessionId");
+          $stm->bindParam(':lasttime', $time);
+          $stm->bindParam(':sessionId', $sessionId);
+          $stm->execute();          
+        }
+        catch(Exception $e)
+        {
+          Log::WriteLog('SessionsError.txt', $e->getMessage() . date('Y-m-d H:i:s'));
+        }
     }
 
     /**
@@ -215,7 +222,7 @@ class Session
       }
       catch(Exception $e)
       {
-        Log::WriteLog('SessionErrors.txt', $e->getMessage() . " " . date('Y-m-d'));
+        Log::WriteLog('SessionErrors.txt', $e->getMessage() . " " . date('Y-m-d H:i:s'));
       }
     }
 }

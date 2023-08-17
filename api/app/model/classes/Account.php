@@ -106,15 +106,15 @@ class Account
     }
 
     public static function ValidateSession($path)
-    {
+    {        
         $session = Session::getSessionFromCookie();
         if(!$session || !Session::findSessionInDatabase($session, $path))
-        {
+        {            
             return false;
-        }
-
-        Session::updateSessionCookie($session);
+        }        
+        Session::updateSessionCookie($session);        
         Session::updateSessionInDatabase($session, $path);
+        Log::WriteLog('refresh.txt', 'YESSS');
         return true;
     }
 
