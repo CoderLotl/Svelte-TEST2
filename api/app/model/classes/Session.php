@@ -197,8 +197,6 @@ class Session
       try
       {
         while (true) {
-          //if we manipulate this - we need remember that url crypt system are related
-          //with session key length.
           $remaddr = $_SERVER['REMOTE_ADDR'];        
     
           // 4 byte suffix of session id is based on player's IP to eliminate session conflicts

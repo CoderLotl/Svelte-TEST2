@@ -1,0 +1,121 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #222222;
+  }
+
+  #header
+  {
+    background-color: #333;
+    display: flex;
+    width: 100%;
+  }
+  
+  #menu-toggle
+  {
+      visibility: hidden;
+  }
+
+  #logo{
+    width: 50px;
+  }
+  
+  .nav-bar {    
+    background-color: #333;
+    color: white;    
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;        
+  }
+
+  .menu
+  {
+    display: flex;
+    justify-content: end;
+  }
+
+  .nav-bar img{
+    width: 20px;
+  }
+  
+  .nav-bar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+  
+  .nav-bar li {
+    padding: 10px 15px;
+    text-align: center;
+  }
+  
+  .nav-bar a {
+    text-decoration: none;
+    color: white;
+  }
+  
+  .burger-icon {
+    font-size: 24px;
+    cursor: pointer;
+    padding: 15px;
+    display: none;
+  }
+  
+  @media screen and (max-width: 480px) {
+    .nav-bar {
+      max-height: 0;
+    }
+    #header
+    {
+      max-height: 0;
+    }
+  
+    .nav-bar ul {
+      flex-direction: column;
+      background-color: #444;
+      position: absolute;
+      width: 100%;
+      top: 60px;
+      left: 0;
+      max-height: 0;
+      overflow: hidden;
+      transform-origin: top; /* Set the transform origin to the top edge */
+      transform: scaleY(0); /* Start with a collapsed menu */
+      transition: transform 0.5s ease-in-out; /* Slower transition */
+    }
+  
+    .nav-bar li {
+      padding: 10px;
+      text-align: center;
+    }
+  
+    .burger-icon {
+      display: block;
+    }
+  
+    #menu-toggle:checked ~ #header .nav-bar {
+      max-height: 500px; /* Adjust as needed */
+    }
+    /* Additional styles for expanded menu */
+    #menu-toggle:checked ~ #header .nav-bar ul {
+        max-height: 500px; /* Adjust as needed */
+      transform: scaleY(1);
+    }
+  
+    /* Additional styles for list items within expanded menu */
+    #menu-toggle:checked ~ #header .nav-bar ul li {
+      opacity: 1;
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+  
+    #menu-toggle:checked ~ #header .nav-bar ul li:nth-child(1) {
+      transition-delay: 0.1s;
+    }
+  
+    #menu-toggle:checked ~ #header .nav-bar ul li:nth-child(2) {
+      transition-delay: 0.2s;
+    }
+  
+  }
