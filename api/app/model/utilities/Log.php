@@ -22,6 +22,11 @@ class Log
     {
         file_put_contents($file, '');
     }
+
+    public static function DeleteLog($path)
+    {
+        unlink($path);
+    }
 }
 
 ?>
