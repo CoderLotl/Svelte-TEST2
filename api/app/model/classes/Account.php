@@ -73,6 +73,7 @@ class Account
                     }
                     
                     Account::UpdateUserData($data['user'], $path);
+                    Account::RegisterNewLogin($data['user'], $path);
                     return true; //either way we return true since the user has logged in correctly.                    
                 }
                 else
@@ -87,8 +88,8 @@ class Account
         }
         catch (Exception $e)
         {    
-            die($e);
             Log::WriteLog('AccountErrors.txt', $e->getMessage() . " " . date('Y-m-d'));
+            die($e);
         }
     }
 
@@ -117,6 +118,30 @@ class Account
         return true;
     }
 
+    private static function RegisterNewLogin($userName, $path)
+    {
+        try
+        {
+            $dataAccess = new DataAccess();            
+
+            $userID = $dataAccess->GetSingleColumn('users', 'id', ['name'], [$userName], $path);
+            $userIP = $_SERVER['REMOTE_ADDR'];
+            $userHost = gethostbyaddr($userIP);
+            $time = date('Y-m-d H:i:s');
+    
+            $pdo = new PDO('sqlite:' . $path);
+    
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $stm = $pdo->prepare("INSERT INTO users_logins SET id = $userID, name = $userName, ip = $userIP, hostname = $userHost, lasttime = $time");
+            $stm->execute();  
+        }
+        catch(Exception $e)
+        {
+            Log::WriteLog('AccountErrors.txt', $e->getMessage() . " " . date('Y-m-d'));
+            die($e);
+        }
+    }
+
     private static function UpdateUserData($userName, $path)
     {
         try
@@ -127,32 +152,17 @@ class Account
             $userIP = $_SERVER['REMOTE_ADDR'];
             $userHost = gethostbyaddr($userIP);
             $time = date('Y-m-d H:i:s');
-
-            $userIPsJSON = $dataAccess->GetSingleColumn('users', 'ip', ['id'], [$userID], $path);
-            $userHostsJSON = $dataAccess->GetSingleColumn('users', 'hostname', ['id'], [$userID], $path);
-    
-            $userIPs = json_decode($userIPsJSON);
-            $userHosts = json_decode($userHostsJSON);
-    
-            if (!in_array($userIP, $userIPs)) {
-                $userIPs[] = $userIP;
-            }
-            if (!in_array($userHost, $userHosts)) {
-                $userHosts[] = $userHost;
-            }
-    
-            $userIPsJSON = json_encode($userIPs);
-            $userHostsJSON = json_encode($userHosts);
     
             $pdo = new PDO('sqlite:' . $path);
     
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $stm = $pdo->prepare("UPDATE users SET ip = ?, hostname = ?, lasttime = ? WHERE id = ?");
-            $stm->execute([$userIPsJSON, $userHostsJSON, $time, $userID]);            
+            $stm = $pdo->prepare("UPDATE users SET ip = $userIP, hostname = $userHost, lasttime = $time WHERE id = $userID");
+            $stm->execute();            
         }
         catch(Exception $e)
         {
             Log::WriteLog('AccountErrors.txt', $e->getMessage() . " " . date('Y-m-d'));
+            die($e);
         }
     }
 }
