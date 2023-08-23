@@ -88,8 +88,7 @@ class Account
         }
         catch (Exception $e)
         {    
-            Log::WriteLog('AccountErrors.txt', $e->getMessage() . " " . date('Y-m-d'));
-            die($e);
+            Log::WriteLog('AccountErrors.txt', $e->getMessage() . " " . date('Y-m-d'));            
         }
     }
 
@@ -127,18 +126,17 @@ class Account
             $userID = $dataAccess->GetSingleColumn('users', 'id', ['name'], [$userName], $path);
             $userIP = $_SERVER['REMOTE_ADDR'];
             $userHost = gethostbyaddr($userIP);
-            $time = date('Y-m-d H:i:s');
-    
+            $time = date('Y-m-d H:i:s');            
+
             $pdo = new PDO('sqlite:' . $path);
     
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $stm = $pdo->prepare("INSERT INTO users_logins SET id = $userID, name = $userName, ip = $userIP, hostname = $userHost, lasttime = $time");
-            $stm->execute();  
+            $stm = $pdo->prepare("INSERT INTO users_logins (id, name, ip, hostname, login_date) VALUES ( ?, ?, ?, ?, ?)");
+            $stm->execute([$userID, $userName, $userIP, $userHost, $time]);
         }
         catch(Exception $e)
         {
-            Log::WriteLog('AccountErrors.txt', $e->getMessage() . " " . date('Y-m-d'));
-            die($e);
+            Log::WriteLog('AccountErrors.txt', $e->getMessage() . " " . date('Y-m-d H:i:s'));            
         }
     }
 
@@ -152,17 +150,16 @@ class Account
             $userIP = $_SERVER['REMOTE_ADDR'];
             $userHost = gethostbyaddr($userIP);
             $time = date('Y-m-d H:i:s');
-    
+            
             $pdo = new PDO('sqlite:' . $path);
     
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $stm = $pdo->prepare("UPDATE users SET ip = $userIP, hostname = $userHost, lasttime = $time WHERE id = $userID");
-            $stm->execute();            
+            $stm = $pdo->prepare("UPDATE users SET ip = ?, hostname = ?, lasttime = ? WHERE id = ?");
+            $stm->execute([$userIP, $userHost, $time, $userID]);            
         }
         catch(Exception $e)
         {
-            Log::WriteLog('AccountErrors.txt', $e->getMessage() . " " . date('Y-m-d'));
-            die($e);
+            Log::WriteLog('AccountErrors.txt', $e->getMessage() . " " . date('Y-m-d H:i:s'));            
         }
     }
 }
