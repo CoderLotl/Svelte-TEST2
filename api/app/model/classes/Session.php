@@ -32,7 +32,7 @@ class Session
     public function updateSessionCookie($sessionId)
     {      
       $expirationTime = time() + SESSION_EXPIRATION_SECONDS;
-      return setcookie(_SESSION_COOKIE_NAME, $sessionId, $expirationTime, "/", ".localhost", null, true);      
+      return setcookie(_SESSION_COOKIE_NAME, $sessionId, $expirationTime, "/", ".localhost", false, true);      
     }
 
     /**

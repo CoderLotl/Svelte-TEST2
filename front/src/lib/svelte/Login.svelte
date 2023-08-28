@@ -4,7 +4,7 @@
   import '../../assets/css/Login.css';
   //store and params
   import { params } from '../js/init.js';
-  import { logged } from '../js/stores.js';  
+  import { logged, user } from '../js/stores.js';  
   //classes and functions  
   import { login } from '../js/utilities/login.js';
   import { fetchJSONText, fetchPlainText, fetchPlainTextWithParams } from '../js/utilities/fetch.js';
@@ -27,11 +27,12 @@
     try
     {       
       const response = await login(form, params['home'] + '/auth/login');
-            
-      if(response)
+      const data = await response.json();      
+      if(response.status === 200)
       {
         message = 'YES';
         logged.set(true);
+        user.set(data.user);
       }
       else
       {

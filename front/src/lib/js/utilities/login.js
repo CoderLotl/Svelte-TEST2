@@ -9,11 +9,7 @@ export const login = async (data, path) => {
       },
       body: JSON.stringify(data),
     });
-    if (response.status === 200) {
-      return true;
-    } else {
-      return false;
-    }
+    return response;
   }
   catch(error)
   {

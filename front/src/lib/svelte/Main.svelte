@@ -33,7 +33,7 @@
   </div>
   <header id="header">
     <img class="logo" id="logo1" src={logo} alt="logo2"/>
-    <span>USER: {user}</span>
+    <span>USER: {$user}</span>
     <nav class="nav-bar">
       <ul class="menu">
         <li>

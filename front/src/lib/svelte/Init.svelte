@@ -9,10 +9,14 @@
         method: "GET",
         credentials: "include",
       });
-      if (response.status === 200) {
-        let data = await response.json();
-        logged.set(true);
+      const data = await response.json();
+      if (response.status === 200) {        
         user.set(data.user);
+        logged.set(true);
+      }
+      else
+      {
+        console.log('No way');
       }
     } catch (error) {
       console.log(`EXCEPTION: ${error}`);

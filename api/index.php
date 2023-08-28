@@ -75,10 +75,10 @@ $app->group('/auth', function ($group) {
 
             $sessionID = $session->getSessionFromCookie();
             $playerID = $session->findSessionPlayer($sessionID, DB_SQLITE_PATH);
-            $responseData = ['user' => $dataAccess->GetSingleColumn('users', 'name', ['id'], [$playerID], DB_SQLITE_PATH)];
+            $user = $dataAccess->GetSingleColumn('users', 'name', ['id'], [$playerID], DB_SQLITE_PATH);
+            $responseData = ['user' => $user];
 
-            $response->getBody()->write(json_encode($responseData));
-
+            $response->getBody()->write(json_encode($responseData));            
             return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
         } else {
             return $response->withStatus(401);
@@ -90,7 +90,11 @@ $app->group('/auth', function ($group) {
         {
             $account = new Account();
             if($account->Login(DB_SQLITE_PATH)) {
-                return $response->withStatus(200);
+                $data = json_decode(file_get_contents('php://input'), true);                
+                $responseData = ['user' => $data['user']];
+                
+                $response->getBody()->write(json_encode($responseData));
+                return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
             } else {
                 return $response->withStatus(400);
             }
