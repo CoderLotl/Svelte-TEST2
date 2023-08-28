@@ -2,12 +2,13 @@
 use App\Model\Classes\Session;
 use App\Model\Utilities\Log;
 
-$session = Session::getSessionFromCookie();
+$session = new Session();
+$sessionID = $session->getSessionFromCookie();
 
-if($session && Session::findSessionInDatabase($session, DB_SQLITE_PATH))
+if($sessionID && $session->findSessionInDatabase($sessionID, DB_SQLITE_PATH))
 {    
-    Session::updateSessionCookie($session);
-    Session::updateSessionInDatabase($session, DB_SQLITE_PATH);    
+    $session->updateSessionCookie($sessionID);
+    $session->updateSessionInDatabase($sessionID, DB_SQLITE_PATH);    
 }
 
 ?>

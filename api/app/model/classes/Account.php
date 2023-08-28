@@ -9,7 +9,7 @@ use App\Model\Utilities\Log;
 
 class Account
 {
-    public static function CreateAccount($path)
+    public function CreateAccount($path)
     {
         $data = json_decode(file_get_contents('php://input'), true);
         $password = password_hash($data['password'], PASSWORD_DEFAULT);        
@@ -28,10 +28,11 @@ class Account
         return $stm->execute();
     }
 
-    public static function Login($path)
+    public function Login($path)
     {
         $data = json_decode(file_get_contents('php://input'), true);
         $dataAccess = new DataAccess();
+        $session = new Session();
         $columns = ['name'];
         $values = [$data['user']];       
 
@@ -45,35 +46,35 @@ class Account
                 
                 if(password_verify($data['password'], $userEncryptedPass))
                 {                    
-                    $session = Session::getSessionFromCookie();
-                    if(!$session) //if the session cookie doesn't exist ...
+                    $sessionCookie = $session->getSessionFromCookie();
+                    if(!$sessionCookie) //if the session cookie doesn't exist ...
                     { // we get the user's ID, create a new session, and cookie.
                         $userId = $dataAccess->GetSingleColumn('users', 'id', ['name'], [$data['user']], $path);                                                
-                        $sessionID = Session::generateID($path);                        
-                        Session::createSession($sessionID, $userId, $path);                        
-                        Session::updateSessionCookie($sessionID);                        
+                        $sessionID = $session->generateID($path);                        
+                        $session->createSession($sessionID, $userId, $path);                        
+                        $session->updateSessionCookie($sessionID);                        
                     }
                     else
                     {
-                        if(Session::findSessionInDatabase($session, $path))
+                        if($session->findSessionInDatabase($session, $path))
                         {   // if the session cookie exists and matches an existing session ...
-                            Session::updateSessionCookie($session);
-                            Session::updateSessionInDatabase($session, $path);
+                            $session->updateSessionCookie($session);
+                            $session->updateSessionInDatabase($session, $path);
                             // we update both the cookie and the session.                            
                         }
                         else
                         {   // but if the session in the cookie doesn't match ...
-                            Session::deleteSessionCookie();
+                            $session->deleteSessionCookie();
                             // we delete the cookie and create both a new session and cookie for it.
                             $userId = $dataAccess->GetSingleColumn('users', 'id', ['name'], [$data['user']], $path);
-                            $sessionID = Session::generateID($path);
-                            Session::createSession($sessionID, $userId, $path);
-                            Session::updateSessionCookie($sessionID);                            
+                            $sessionID = $session->generateID($path);
+                            $session->createSession($sessionID, $userId, $path);
+                            $session->updateSessionCookie($sessionID);                            
                         }
                     }
                     
-                    Account::UpdateUserData($data['user'], $path);
-                    Account::RegisterNewLogin($data['user'], $path);
+                    $this->UpdateUserData($data['user'], $path);
+                    $this->RegisterNewLogin($data['user'], $path);
                     return true; //either way we return true since the user has logged in correctly.                    
                 }
                 else
@@ -92,32 +93,33 @@ class Account
         }
     }
 
-    public static function Logout($path)
+    public function Logout($path)
     {
-        $session = Session::getSessionFromCookie($path);
-        if(!$session || !Session::findSessionInDatabase($session, $path))
+        $session = new Session();
+        $sessionID = $session->getSessionFromCookie($path);
+        if(!$sessionID || !$session->findSessionInDatabase($sessionID, $path))
         {
             return false;            
         }
-
-        Session::deleteSessionFromDatabase($session, $path);        
-        Session::deleteSessionCookie();
+        $session->deleteSessionFromDatabase($sessionID, $path);        
+        $session->deleteSessionCookie();
         return true;
     }
 
-    public static function ValidateSession($path)
-    {        
-        $session = Session::getSessionFromCookie();
-        if(!$session || !Session::findSessionInDatabase($session, $path))
+    public function ValidateSession($path)
+    {
+        $session = new Session();
+        $sessionID = $session->getSessionFromCookie();
+        if(!$sessionID || !$session->findSessionInDatabase($sessionID, $path))
         {            
             return false;
         }        
-        Session::updateSessionCookie($session);        
-        Session::updateSessionInDatabase($session, $path);        
+        $session->updateSessionCookie($sessionID);        
+        $session->updateSessionInDatabase($sessionID, $path);        
         return true;
     }
 
-    private static function RegisterNewLogin($userName, $path)
+    private function RegisterNewLogin($userName, $path)
     {
         try
         {
@@ -140,7 +142,7 @@ class Account
         }
     }
 
-    private static function UpdateUserData($userName, $path)
+    private function UpdateUserData($userName, $path)
     {
         try
         {

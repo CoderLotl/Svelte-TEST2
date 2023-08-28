@@ -6,14 +6,11 @@ error_reporting(-1);
 ini_set('display_errors', 1);
 
 // CORS
-header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Headers: *');
-header('Access-Control-Allow-Methods: *');
-header('Access-Control-Allow-Credentials: true');
-header('Content-Type: application/json; charset=UTF-8');
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+require __DIR__ . '/config/cors.php';
 
 use App\Model\Classes\Account;
+use App\Model\Classes\DataAccess;
+use App\Model\Classes\Session;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -64,16 +61,27 @@ $app->group('/test', function ($group) {
 /////////////////////////////////////////////////////////////
 #region - - - ROUTES - - -
 $app->group('/auth', function ($group) {
-    $group->get('/validate', function(Request $request, Response $response) {        
-        if(Account::ValidateSession(DB_SQLITE_PATH)) {
-            return $response->withStatus(200);
+    $group->get('/validate', function(Request $request, Response $response) {
+        $account = new Account();                
+        if($account->ValidateSession(DB_SQLITE_PATH)) {
+            $dataAccess = new DataAccess();
+            $session = new Session();
+
+            $sessionID = $session->getSessionFromCookie();
+            $playerID = $session->findSessionPlayer($sessionID, DB_SQLITE_PATH);
+            $responseData = ['user' => $dataAccess->GetSingleColumn('users', 'name', ['id'], [$playerID], DB_SQLITE_PATH)];
+
+            $response->getBody()->write(json_encode($responseData));
+
+            return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
         } else {
             return $response->withStatus(401);
         }
     });
 
     $group->post('/login', function(Request $request, Response $response) {
-        if(Account::Login(DB_SQLITE_PATH)) {
+        $account = new Account();
+        if($account->Login(DB_SQLITE_PATH)) {
             return $response->withStatus(200);
         } else {
             return $response->withStatus(400);
@@ -81,14 +89,14 @@ $app->group('/auth', function ($group) {
     });
 
     $group->post('/logout', function(Request $request, Response $response) {
-        if(Account::Logout(DB_SQLITE_PATH)) {
+        $account = new Account();
+        if($account->Login(DB_SQLITE_PATH)) {
             return $response->withStatus(200);
         } else {
             return $response->withStatus(400);
         }
     });
 });
-
 #endregion
 
 $app->run();

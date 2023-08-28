@@ -7,15 +7,6 @@ use Exception;
 
 class Session
 {
-    private $sessionId;
-    private $userId;
-    private $password;
-    
-    public function __construct($sessionId = null)
-    {
-        $this->sessionId = $sessionId;
-    }        
-
     /////////////////////////////////////////////////////////////
     #region - - - COOKIES - - -
     /**
@@ -23,7 +14,7 @@ class Session
      * Returns the session from the cookies if it exists.
      * @return int|null
      */
-    public static function getSessionFromCookie()
+    public function getSessionFromCookie()
     {
       if (isset($_COOKIE[_SESSION_COOKIE_NAME]) && !empty($_COOKIE[_SESSION_COOKIE_NAME])) {
         return intval($_COOKIE[_SESSION_COOKIE_NAME]);
@@ -38,7 +29,7 @@ class Session
      * 
      * @return bool
      */
-    public static function updateSessionCookie($session_id)
+    public function updateSessionCookie($session_id)
     {      
       $expirationTime = time() + SESSION_EXPIRATION_SECONDS;
       return setcookie(_SESSION_COOKIE_NAME, $session_id, $expirationTime, "/", ".localhost", null, true);      
@@ -49,7 +40,7 @@ class Session
      * Deletes the session cookie on the client.
      * @return bool
      */
-    public static function deleteSessionCookie()
+    public function deleteSessionCookie()
     {
       return setcookie(_SESSION_COOKIE_NAME, '', time() - 3600, '/');
     }
@@ -66,7 +57,7 @@ class Session
      * 
      * @return void
      */
-    public static function createSession($sessionId, $userId, $path)
+    public function createSession($sessionId, $userId, $path)
     {
         $userIP = $_SERVER['REMOTE_ADDR'];
         $userHost = gethostbyaddr($userIP);
@@ -97,7 +88,7 @@ class Session
      * 
      * @return void
      */
-    public static function updateSessionInDatabase($sessionId, $path)
+    public function updateSessionInDatabase($sessionId, $path)
     {
         $time = date('Y-m-d H:i:s');
         try
@@ -123,7 +114,7 @@ class Session
      * 
      * @return bool
      */
-    public static function findSessionInDatabase($sessionId, $path)
+    public function findSessionInDatabase($sessionId, $path)
     {
         $pdo = new PDO('sqlite:'.$path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -141,7 +132,7 @@ class Session
      * 
      * @return int|false
      */
-    public static function findSessionPlayer($sessionId, $path)
+    public function findSessionPlayer($sessionId, $path)
     {
         $pdo = new PDO('sqlite:'.$path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -149,6 +140,16 @@ class Session
         $stm->bindParam(":id", $sessionId);
         $stm->execute();
         return $stm->fetchColumn();
+    }
+
+    public function findSessionPlayerName($sessionId, $path)
+    {
+      $pdo = new PDO('sqlite:'.$path);
+      $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      $stm = $pdo->prepare("SELECT name FROM users where id = :id");
+      $stm->bindParam(":id", $sessionId);
+      $stm->execute();
+      return $stm->fetchColumn();
     }
   
     /**
@@ -159,7 +160,7 @@ class Session
      * 
      * @return bool
      */
-    public static function deleteSessionFromDatabase($sessionId, $path)
+    public function deleteSessionFromDatabase($sessionId, $path)
     {
         $pdo = new PDO('sqlite:'.$path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -176,7 +177,7 @@ class Session
      * 
      * @return void
      */
-    public static function deleteExpiredSessions($expirationTimestamp, $path)
+    public function deleteExpiredSessions($expirationTimestamp, $path)
     {
         $pdo = new PDO('sqlite:'.$path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -192,7 +193,7 @@ class Session
      * 
      * @return int
      */
-    public static function generateID($path)
+    public function generateID($path)
     {
       try
       {
