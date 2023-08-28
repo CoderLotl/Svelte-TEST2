@@ -76,12 +76,12 @@ $app->group('/auth', function ($group) {
             $sessionID = $session->getSessionFromCookie();
             $playerID = $session->findSessionPlayer($sessionID, DB_SQLITE_PATH);
             $user = $dataAccess->GetSingleColumn('users', 'name', ['id'], [$playerID], DB_SQLITE_PATH);
-            $responseData = ['user' => $user];
+            $responseData = ['user' => $user, 'max_chars' => MAX_CHARACTERS];
 
             $response->getBody()->write(json_encode($responseData));            
             return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
         } else {
-            return $response->withStatus(401);
+            return $response->withStatus(400);
         }
     });
 

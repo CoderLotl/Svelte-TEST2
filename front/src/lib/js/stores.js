@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
 
-export const logged = writable(null);
-export const user = writable(null);
-export const config = writable(null);
+export const logged = writable();
+export const user = writable();
+export const config = writable();

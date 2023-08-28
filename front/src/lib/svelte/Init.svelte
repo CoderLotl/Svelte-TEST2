@@ -36,13 +36,7 @@
         method: "GET",
         credentials: "include",
       });
-      const data = await response.json();      
-      if (response.status === 200) {        
-        user.set(data.user);
-        logged.set(true);
-      } else {
-        logged.set(false);
-      }
+      return response;
     } catch (error) {
       console.log(`EXCEPTION: ${error}`);
     }

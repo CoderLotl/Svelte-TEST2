@@ -16,8 +16,8 @@ class Session
      */
     public function getSessionFromCookie()
     {
-      if (isset($_COOKIE[_SESSION_COOKIE_NAME]) && !empty($_COOKIE[_SESSION_COOKIE_NAME])) {
-        return intval($_COOKIE[_SESSION_COOKIE_NAME]);
+      if (isset($_COOKIE[SESSION_COOKIE_NAME]) && !empty($_COOKIE[SESSION_COOKIE_NAME])) {
+        return intval($_COOKIE[SESSION_COOKIE_NAME]);
       }
       return null;
     }
@@ -32,7 +32,7 @@ class Session
     public function updateSessionCookie($sessionId)
     {      
       $expirationTime = time() + SESSION_EXPIRATION_SECONDS;
-      return setcookie(_SESSION_COOKIE_NAME, $sessionId, $expirationTime, "/", ".localhost", false, true);      
+      return setcookie(SESSION_COOKIE_NAME, $sessionId, $expirationTime, "/", ".localhost", false, true);      
     }
 
     /**
@@ -42,7 +42,7 @@ class Session
      */
     public function deleteSessionCookie()
     {
-      return setcookie(_SESSION_COOKIE_NAME, '', time() - 3600, '/');
+      return setcookie(SESSION_COOKIE_NAME, '', time() - 3600, '/');
     }
     #endregion
 
