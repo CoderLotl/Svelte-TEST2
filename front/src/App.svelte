@@ -1,24 +1,19 @@
-<script>  
-  import { logged } from './lib/js/stores.js';
-  import Init from './lib/svelte/Init.svelte';
-  import Login from './lib/svelte/Login.svelte';
-  import Main from './lib/svelte/Main.svelte';
-  let loggedMain;
+<script>
+  import { auth } from "./lib/svelte/Init.svelte";
+  import Login from "./lib/svelte/Login.svelte";
+  import Main from "./lib/svelte/Main.svelte";
+  import { params } from "./lib/js/init.js";
+  import { logged, user } from "./lib/js/stores.js";
 
-  logged.subscribe
-  (
-    (value) =>
-    {
-      loggedMain = value;
-    }
-  );
+  auth();
 </script>
 
-<Init />
-
-{#if loggedMain === false}
-  <Login />
-{:else}
-  <Main />
-{/if}
-
+{#await logged then}
+  {#if $logged === false}
+    <Login />
+  {:else}
+    {#await user then}
+      <Main />
+    {/await}
+  {/if}
+{/await}
