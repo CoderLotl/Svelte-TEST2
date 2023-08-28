@@ -35,7 +35,7 @@ class Account
         $session = new Session();
         $columns = ['name'];
         $values = [$data['user']];       
-
+        
         try
         {            
             $userExists = $dataAccess->Find('users', $columns, $values, $path);
@@ -55,11 +55,11 @@ class Account
                         $session->updateSessionCookie($sessionID);                        
                     }
                     else
-                    {
-                        if($session->findSessionInDatabase($session, $path))
+                    {                        
+                        if($session->findSessionInDatabase($sessionCookie, $path))
                         {   // if the session cookie exists and matches an existing session ...
-                            $session->updateSessionCookie($session);
-                            $session->updateSessionInDatabase($session, $path);
+                            $session->updateSessionCookie($sessionCookie);
+                            $session->updateSessionInDatabase($sessionCookie, $path);
                             // we update both the cookie and the session.                            
                         }
                         else

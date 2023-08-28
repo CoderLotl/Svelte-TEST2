@@ -29,10 +29,10 @@ class Session
      * 
      * @return bool
      */
-    public function updateSessionCookie($session_id)
+    public function updateSessionCookie($sessionId)
     {      
       $expirationTime = time() + SESSION_EXPIRATION_SECONDS;
-      return setcookie(_SESSION_COOKIE_NAME, $session_id, $expirationTime, "/", ".localhost", null, true);      
+      return setcookie(_SESSION_COOKIE_NAME, $sessionId, $expirationTime, "/", ".localhost", null, true);      
     }
 
     /**
@@ -116,12 +116,19 @@ class Session
      */
     public function findSessionInDatabase($sessionId, $path)
     {
+      try
+      {
         $pdo = new PDO('sqlite:'.$path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $stm = $pdo->prepare("SELECT COUNT(*) FROM sessions WHERE id = :id");
         $stm->bindParam(":id", $sessionId);
-        $stm->execute();
+        $stm->execute();        
         return $stm->fetchColumn() > 0;
+      }
+      catch(Exception $e)
+      {
+        Log::WriteLog('findSessionInDatabase.txt', $e->getMessage());
+      }
     }
 
     /**

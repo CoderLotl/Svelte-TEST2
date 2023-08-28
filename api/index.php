@@ -6,7 +6,13 @@ error_reporting(-1);
 ini_set('display_errors', 1);
 
 // CORS
-require __DIR__ . '/config/cors.php';
+//require __DIR__ . '/config/cors.php';
+header('Access-Control-Allow-Origin: http://localhost:5173');
+header('Access-Control-Allow-Headers: *');
+header('Access-Control-Allow-Methods: *');
+header('Access-Control-Allow-Credentials: true');
+header('Content-Type: application/json; charset=UTF-8');
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 use App\Model\Classes\Account;
 use App\Model\Classes\DataAccess;
@@ -80,17 +86,24 @@ $app->group('/auth', function ($group) {
     });
 
     $group->post('/login', function(Request $request, Response $response) {
-        $account = new Account();
-        if($account->Login(DB_SQLITE_PATH)) {
-            return $response->withStatus(200);
-        } else {
-            return $response->withStatus(400);
+        try
+        {
+            $account = new Account();
+            if($account->Login(DB_SQLITE_PATH)) {
+                return $response->withStatus(200);
+            } else {
+                return $response->withStatus(400);
+            }
+        }
+        catch(Exception $e)
+        {
+            Log::WriteLog('error.txt', $e->getMessage());
         }
     });
 
     $group->post('/logout', function(Request $request, Response $response) {
         $account = new Account();
-        if($account->Login(DB_SQLITE_PATH)) {
+        if($account->Logout(DB_SQLITE_PATH)) {
             return $response->withStatus(200);
         } else {
             return $response->withStatus(400);
