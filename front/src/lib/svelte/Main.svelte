@@ -45,6 +45,6 @@
     </nav>
   </header>
   <div id="title-div">
-    <p class="title">Character List</p>
+    <span class="title">Characters List</span>
   </div>
 </div>

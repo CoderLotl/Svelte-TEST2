@@ -1,10 +1,14 @@
 body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #3b3b3b;  
+  display: flex;  
+  min-width: unset;
+  min-height: 100vh;
+}
+
+#app {
+  padding: unset;
+  width: 80%;
+  display: flex;
 }
 
 .container {
@@ -13,7 +17,7 @@ body {
   width: 80%;
   border-style: solid;
   border-width: 2px;
-  border-color: #444;  
+  border-color: #444;
 }
 
 #header {
@@ -22,7 +26,12 @@ body {
   width: 100%;
   border-style: solid;
   border-width: 1px;
-  border-color: #5f5f5f;  
+  border-color: #5f5f5f;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
 }
 
 #menu-toggle {
@@ -35,10 +44,9 @@ body {
   margin: 10px;
 }
 
-.menu-toggle-wrapper
-{
+.menu-toggle-wrapper {
   background-color: #2a2950;
-  background-image: linear-gradient(to right, #053964 , rgb(11, 46, 23)); 
+  background-image: linear-gradient(to right, #053964, rgb(11, 46, 23));
   visibility: hidden;
   display: flex;
   justify-content: space-between;
@@ -50,7 +58,7 @@ body {
 
 .nav-bar {
   background-color: #2a2950;
-  background-image: linear-gradient(to right, #053964 , rgb(11, 46, 23));  
+  background-image: linear-gradient(to right, #053964, rgb(11, 46, 23));
   display: flex;
   flex-grow: 1;
   overflow: hidden;
@@ -97,29 +105,21 @@ body {
   display: none;
 }
 
-.title
-{
+#title-div {
+  display: flex;
+  justify-content: center;
+}
+
+.title {
+  margin-top: 10px;
   margin-left: 5%;
   margin-right: 5%;
-  width: 90%;
+  width: 70%;
   padding: 5px;
-  box-shadow: 1px 1px 3px;
   text-align: center;
   background-color: #053964;
   color: #a8a8a8;
   border-radius: 10px;
-}
-
-@media screen and (min-width: 1000px) {
-  .container {
-    width: 1000px;
-  }
-  .title
-  {
-    /*margin-left: unset;
-    margin-right: unset;
-    width: 800px;*/
-  }
 }
 
 @media screen and (max-width: 480px) {
@@ -136,7 +136,7 @@ body {
   }
   .menu-toggle-wrapper {
     visibility: visible;
-    height: auto;    
+    height: auto;
     border-style: solid;
     border-width: 1px;
     border-color: #5f5f5f;
@@ -153,16 +153,15 @@ body {
     overflow: hidden;
     transform-origin: top;
     transform: scaleY(0);
-    transition: transform 0.2s ease-in-out;    
+    transition: transform 0.2s ease-in-out;
   }
 
   .nav-bar li {
     padding: 10px;
-    text-align: center;    
+    text-align: center;
   }
 
-  .nav-bar li:hover
-  {    
+  .nav-bar li:hover {
     background-color: #6bc24321;
   }
 
@@ -173,7 +172,7 @@ body {
   #menu-toggle:checked ~ #header .nav-bar {
     max-height: 500px;
   }
-  
+
   #menu-toggle:checked ~ #header .nav-bar ul {
     max-height: 500px;
     transform: scaleY(1);
