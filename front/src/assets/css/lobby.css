@@ -1,14 +1,25 @@
+:root
+{
+  background-color: rgb(22, 83, 27);
+}
+
 body {
-  margin: 0;
-  display: flex;  
-  min-width: unset;
-  min-height: 100vh;
+  place-items: unset;
+  min-width: unset;  
+  background-color: #a8a8a8;
+  flex-direction: column;
+  align-items: center;
 }
 
 #app {
-  padding: unset;
-  width: 80%;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1000px;  
+  width: 100%;
+  padding: 0%;
+  margin: 0%;
+  background-color: #5f5f5f;
 }
 
 .container {
@@ -123,9 +134,20 @@ body {
 }
 
 @media screen and (max-width: 480px) {
+  #app
+  {
+    width: 100%;
+  }
+  
   .nav-bar {
     max-height: 0;
   }
+
+  #user
+  {
+    visibility: hidden;
+  }
+
   #header {
     max-height: 0;
     border-style: none;
@@ -136,7 +158,7 @@ body {
   }
   .menu-toggle-wrapper {
     visibility: visible;
-    height: auto;
+    height: auto;    
     border-style: solid;
     border-width: 1px;
     border-color: #5f5f5f;
@@ -144,11 +166,11 @@ body {
 
   .nav-bar ul {
     flex-direction: column;
-    background-color: #444;
+    background-color: #444444;
     position: absolute;
     width: 100%;
     top: 90px;
-    left: 0;
+    left: 0%;
     max-height: 0;
     overflow: hidden;
     transform-origin: top;
@@ -192,4 +214,14 @@ body {
   #menu-toggle:checked ~ #header .nav-bar ul li:nth-child(2) {
     transition-delay: 0.2s;
   }
+
+  #menu-toggle:checked ~ #title-div .title
+  {
+    margin-top: 120px;
+    transition: 0.2s;
+    -webkit-transition: 0.2s;
+    -moz-transition: 0.2s;
+    -ms-transition: 0.2s;
+    -o-transition: 0.2s;
+}
 }
